@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile Setup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #33ccff 0%, #ff66cc 100%);
+            
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        header {
+            position: fixed;
+            top: 5px;
+            left: 5px;
+        }
+        .container {
+            
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow:3px 4px 4px 4px rgba(162, 13, 130, 0.5);
+            width: 350px;
+            
+        }
+        h1 {
+            text-align: center;
+            color: #a20db3;
+            font-size: 40px
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            color: #6c0885;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 12px;
+            border: 2px solid #7d3a7f;
+            border-radius: 4px;
+            background: none;
+            color: black;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #1075e1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="../images/soconnectlogo-2.png" height="200px">
+    </header>
+    <div class="container">
+        <h1>User Profile</h1>
+        <form action="/submit" method="POST">
+            <label for="birthdate">Birthdate:</label>
+            <input type="date" id="birthdate" name="birthdate" required>
+
+            <label for="hobby">Hobby:</label>
+            <input type="text" id="hobby" name="hobby" placeholder="Enter your hobby" required>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="" disabled selected>Select your gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" placeholder="Enter your city" required>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hobby Chat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Friends List Section -->
+    <div class="friends-list">
+      <h3>Your Friends</h3>
+      <ul>
+        <li class="friend" data-chat="chat-1">
+          <img src="../images/side-image.jpeg" alt="Friend 1" class="profile-pic">
+          <span class="friend-name">Alice</span>
+        </li>
+        <li class="friend" data-chat="chat-2">
+          <img src="profile2.jpg" alt="Friend 2" class="profile-pic">
+          <span class="friend-name">Bob</span>
+        </li>
+        <li class="friend" data-chat="chat-3">
+          <img src="profile3.jpg" alt="Friend 3" class="profile-pic">
+          <span class="friend-name">Charlie</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Chat Box Section -->
+    <div class="chat-container">
+      <div class="chat-header">
+        <h3>Select a Friend to Chat</h3>
+      </div>
+      <div class="chat-box" id="chat-box">
+        <!-- Messages will appear here -->
+      </div>
+      <div class="chat-input">
+        <input type="text" id="message-input" placeholder="Type a message..." />
+        <button id="send-button">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+* {
+    
+    font-family: "Playfair Display", serif;
+    font-optical-sizing: auto;
+    font-weight: weight;
+    font-style: normal;
+}
+body {
+    background: linear-gradient(to right, #33ccff 0%, #ff66cc 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    
+}
+header {
+    position: fixed;
+    top: 5px;
+    left: 5px;
+}
+
+.container {
+    position: absolute;
+    top: 18%;
+    left: 38%;
+    height: 350px;
+    width: 300px;
+    padding: 30px;
+   
+    box-shadow:3px 4px 4px 4px rgba(162, 13, 130, 0.5)
+
+}
+.basic-info {
+    padding-bottom: 20px;
+   
+}
+.basic-info h1 {
+    font-size: 3rem;
+}
+.basic-info p {
+    font-size: 1rem;
+}
+.login-btn {
+    background-color: rgb(28, 14, 135);
+    padding: 10px 30px;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    outline: none;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 15px;
+    margin-bottom: 20px;
+    width: 50%;
+}
+.login-btn:hover {
+    background-color: rgb(14, 4, 86);
+    box-shadow: 3px 4px 5px rgba(0, 0, 0, 0.3);
+}
+.register-btn {
+    background-color: rgb(90, 10, 143);
+    color: white;
+    padding: 10px 18px;
+    outline: none;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 10px;
+    width: 50%;
+}
+.register-btn:hover {
+    background-color: rgb(67, 14, 101);
+    box-shadow: 3px 4px 5px rgba(0, 0, 0, 0.3);
+}
