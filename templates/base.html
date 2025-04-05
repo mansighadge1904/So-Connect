@@ -1,0 +1,46 @@
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoConnect: Connecting people with shared hobbies</title>
+    <link rel="stylesheet" href="{% static 'assets1/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h2 class="logo">SoConnect</h2>
+            <div class="search-bar">
+                <i class="uil uil-search"></i>
+                <input type="search" placeholder="Search for creators, inspirations, and projects">
+            </div>
+            <div class="create">
+                <label class="btn btn-primary" for="create-post">Create</label>
+                <div class="profile-photo">
+                    <a href="{% url 'profile' user_id=request.user.id %}">
+                        <img src="{% static 'images/default-profile.jpg' %}" alt="Profile">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <div class="container">
+            <div class="left">
+                <div class="logo-container">
+                    <img src="{% static 'assets1/soconnectlogo-2.png' %}" alt="Your Logo" class="logo">
+                </div>
+                <a href="#"><i class="uil uil-home"></i> Home</a>
+                <a href="#"><i class="uil uil-compass"></i> Explore</a>
+                <a href="#"><i class="uil uil-bell"></i> Notifications </a>
+                <a href="#"><i class="uil uil-envelope-alt"></i> Messages</a>
+                <a href="#"><i class="uil uil-palette"></i> Theme</a>
+                <a href="#"><i class="uil uil-setting"></i> Settings</a>
+            </div>
+ {% endblock content %}

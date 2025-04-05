@@ -1,0 +1,174 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoConnect: Connecting people with shared hobbies</title>
+    <link rel="stylesheet" href="{% static 'assets1/style.css' %}">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h2 class="logo">SoConnect</h2>
+            <div class="search-bar">
+                <i class="uil uil-search"></i>
+                <input type="search" placeholder="Search for creators, inspirations, and projects">
+            </div>
+            <div class="create">
+                <a href="{% url 'create_post' %}" class="btn btn-primary">Create</a>
+                <div class="profile-photo">
+                    <a href="{% url 'profile' user_id=request.user.id %}">
+                        {% if request.user.profile.image %}
+                            <img src="{{ request.user.profile.image.url }}" alt="Profile">
+                        {% else %}
+                            <img src="{% static 'images/default-profile.jpg' %}" alt="Default Profile">
+                        {% endif %}
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </nav>
+    <main>
+        <div class="container">
+            <div class="left">
+                <div class="logo-container">
+                    <img src="{% static 'assets1/soconnectlogo-2.png' %}" alt="Your Logo" class="logo">
+                </div>
+                <a href="#"><i class="uil uil-home"></i> Home</a>
+                <a href="#"><i class="uil uil-compass"></i> Explore</a>
+                <a href="#"><i class="uil uil-bell"></i> Notifications </a>
+                <a href="#"><i class="uil uil-envelope-alt"></i> Messages</a>
+                <a href="#"><i class="uil uil-palette"></i> Theme</a>
+                <a href="#"><i class="uil uil-setting"></i> Settings</a>
+            </div>
+            <div class="middle">
+                <div class="stories">
+                    {% for story in stories %}
+                        <div class="story">
+                            {% if story.image %}
+                                <img src="{{ story.image.url }}" alt="Story Image" class="story-img">
+                            {% else %}
+                                <p>No image</p>
+                            {% endif %}
+                            <p class="name">@{{ story.user.username }}</p>
+                            <p>DEBUG: {{ story.id }}</p>
+                        </div>
+                    {% empty %}
+                        <p>No stories available</p>
+                        <p>DEBUG: Stories queryset is empty</p>
+                    {% endfor %}
+                </div>
+                
+                <div class="feeds">
+                    {% for post in posts %}
+                        <div class="feed" data-post-id="{{ post.id }}">
+                            <div class="head">
+                                <div class="user">
+                                    <div class="profile-photo">
+                                        {% if post.user.profile.image %}
+                                            <img src="{{ post.user.profile.image.url }}" alt="Profile Photo">
+                                        {% else %}
+                                            <img src="{% static 'images/default-profile.jpg' %}" alt="Default Profile Photo">
+                                        {% endif %}
+                                    </div>
+                                    <div class="info">
+                                        <h3>{{ post.user.username }}</h3>
+                                        <small>{{ post.created_at }}</small>
+                                    </div>
+                                </div>
+                                <span class="edit">
+                                    <i class="uil uil-ellipsis-h"></i>
+                                </span>
+                            </div>
+                            <div class="photo">
+                                {% if post.image %}
+                                    <img src="{{ post.image.url }}" alt="Post Image">
+                                {% endif %}
+                            </div>
+                            <div class="action-buttons">
+                                <div class="interaction-buttons">
+                                    <a href="#" class="like-button">
+                                        <span class="like-icon {% if request.user in post.likes.all %}liked-fill{% else %}unliked{% endif %}">
+                                            <i class="{% if request.user in post.likes.all %}fas fa-heart{% else %}far fa-heart{% endif %}"></i>
+                                        </span>
+                                    </a>
+                                    <span><i class="ui uil-comment-dots"></i></span>
+                                    <span><i class="ui uil-share-alt"></i></span>
+                                </div>
+                                <div class="bookmark">
+                                    <span><i class="ui uil-bookmark-full"></i></span>
+                                </div>
+                            </div>
+                            <div class="caption">
+                                <p><b>{{ post.user.username }}</b> {{ post.caption }}</p>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>No posts to display.</p>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="right">
+                <div class="messages">
+                    <div class="heading">
+                        <h4>ChitChat</h4><i class="uil uil-edit"></i>
+                    </div>
+                    <div class="search-bar">
+                        <i class="uil uil-search"></i>
+                        <input type="search" placeholder="Search chats" id="chat-search">
+                    </div>
+                    <div class="message">
+                        <div class="profile-photo">
+                            <img src="">
+                        </div>
+                        <div class="message-body">
+                            <h5>Sandhya Puri</h5>
+                            <p class="text-bold">2 new messages</p>
+                        </div>
+                    </div>
+                    </div>
+            </div>
+        </div>
+    </main>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script src="{% static 'assets1/script.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const likeButtons = document.querySelectorAll('.like-button');
+
+            likeButtons.forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent default link behavior
+
+                    const feed = this.closest('.feed');
+                    const postId = feed.dataset.postId;
+                    const likeIcon = this.querySelector('.like-icon');
+
+                    fetch(`/users/like_post/${postId}/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.liked) {
+                                likeIcon.classList.remove('unliked');
+                                likeIcon.classList.add('liked-fill');
+                                likeIcon.querySelector('i').classList.remove('far');
+                                likeIcon.querySelector('i').classList.add('fas');
+                            } else {
+                                likeIcon.classList.remove('liked-fill');
+                                likeIcon.classList.add('unliked');
+                                likeIcon.querySelector('i').classList.remove('fas');
+                                likeIcon.querySelector('i').classList.add('far');
+                            }
+                        });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
