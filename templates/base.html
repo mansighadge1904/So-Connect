@@ -1,0 +1,60 @@
+{% load static %}
+<!-- base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SoConnect</title>
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css">
+    <link rel="stylesheet" href="{% static 'css/base-style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+   
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h2 class="logo">SoConnect</h2>
+            <div class="create">
+                <a href="{% url 'create_post' %}" class="btn btn-primary">Create</a>
+                <div class="profile-photo">
+                    <a href="{% url 'profile' username=request.user.username %}"></a>
+                    {% if request.user.profile.image %}
+                        <img src="{{ request.user.profile.image.url }}" alt="Profile">
+                    {% else %}
+                        <img src="{% static 'images/default-profile.jpg' %}" alt="Profile">
+                    {% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="left">
+                        <div class="logo-container">
+                            <img src="{% static 'assets1/soconnectlogo-2.png' %}" alt="Your Logo" class="logo">
+                        </div>
+                        <a href="{% url 'dashboard' %}"><i class="uil uil-home"></i> Home</a>
+                        <a href="{% url 'notifications' %}"><i class="uil uil-bell"></i> Notifications</a>
+                        <a href="#"><i class="uil uil-envelope-alt"></i> Messages</a> 
+                        <a href="{% url 'profile' username=request.user.username %}"><i class="uil uil-user"></i>Profile</a>
+                        <a href="{% url 'edit_profile' username=request.user.username %}"><i class="uil uil-edit"></i>Edit Profile</a>
+
+                        <a href="{% url 'index' %}" class="btn btn-danger" style="color: white;">Logout</a>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    {% block content %}
+                    <!--  Dashboard content will go here -->
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!-- notifications.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="notifications-container">
+    <h2>Notifications</h2>
+
+    {% if notifications %}
+        <ul class="notification-list">
+            {% for notification in notifications %}
+                <li class="notification-item {% if not notification.is_read %}unread{% endif %}">
+                    <div class="notification-header">
+                        <strong>{{ notification.sender.username }}</strong>
+                        <span class="timestamp">{{ notification.timestamp|timesince }} ago</span>
+                    </div>
+                    <div class="notification-body">
+                        {% if notification.notification_type == 'follow' %}
+                            followed you.
+                        {% elif notification.notification_type == 'like' %}
+                            liked your post: <a href="{% url 'post_detail' notification.post.id %}">{{ notification.post.title }}</a>.
+                        {% elif notification.notification_type == 'comment' %}
+                            commented on your post: <a href="{% url 'post_detail' notification.post.id %}">{{ notification.post.title }}</a>. 
+                            Comment: "{{ notification.comment }}"
+                        {% elif notification.notification_type == 'mention' %}
+                            mentioned you in a post: <a href="{% url 'post_detail' notification.post.id %}">{{ notification.post.title }}</a>.
+                        {% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have no notifications.</p>
+    {% endif %}
+</div>
+{% endblock %}

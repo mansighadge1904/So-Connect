@@ -1,0 +1,176 @@
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10; /* Make sure it's above the content */
+    height: 6.5rem; /* Height of your navbar */
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+nav .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px; /* Increased max-width */
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+nav .logo {
+    font-family: 'Billabong', cursive;
+    font-size: 2rem;
+    margin-right: 2rem;
+    color: #262626;
+}
+
+.search-bar {
+    background-color: #efefef;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    width: 200px;
+}
+
+.search-bar input {
+    border: none;
+    background-color: transparent;
+    font-size: 0.9rem;
+    width: 100%;
+    margin-left: 0.5rem;
+}
+
+.create {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-primary {
+    background-color: #0095f6;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: #0078d7;
+}
+
+.profile-photo {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid #dbdbdb;
+}
+
+.profile-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+main {
+    margin-top: 6.5rem; /* Matches actual height of your nav bar */
+    background-color: #fafafa;
+    padding: 2rem;
+    padding-top: 1rem; /* Ensure some padding is added */
+    min-height: calc(100vh - 6.5rem);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    overflow-y: hidden; /* Ensure content doesn't overflow */
+}
+
+main .container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    max-width: 1200px; /* Increased max-width */
+    margin: 0 auto;
+    padding: 0 20px;
+}
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    
+}
+.left {
+    width: 250px;
+    position: fixed;
+    top:6.6rem;
+    left: 10rem;
+    margin-right: 2rem;
+    margin-top: 1rem;
+    height: calc(100vh - 5rem);
+    overflow-y: auto;
+}
+
+.left .logo-container {
+    margin-bottom: 2rem;
+}
+
+.left .logo {
+    max-width: 150px;
+}
+
+.left a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    color: #262626;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.left a:hover {
+    background-color: #efefef;
+}
+
+.left a i {
+    margin-right: 1rem;
+    font-size: 1.2rem;
+}
+.btn-danger {
+    background-color: rgb(169, 4, 4);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: 5px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    width: 80px;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+.btn-danger:hover {
+    background-color: rgb(244, 138, 138);
+}
+.main-wrapper {
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+    flex-grow: 1; /* This will allow it to expand and fill available space */
+    overflow-y: auto; /* Make sure it scrolls when content overflows */
+}
+

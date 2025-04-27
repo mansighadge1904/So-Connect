@@ -1,0 +1,121 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to SoConnect</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Root Variables */
+        :root {
+            --color-dark: hsl(252, 30%, 17%);
+            --color-light: hsl(252, 30%, 95%);
+            --color-white: hsl(252, 30%, 100%);
+            --color-gray: hsl(252, 15%, 65%);
+            --color-primary: hsl(252, 75%, 60%);
+            --color-secondary: hsl(252, 100%, 90%);
+            --color-success: hsl(120, 95%, 65%);
+            --color-danger: hsl(0, 95%, 65%);
+            --color-black: hsl(252, 30%, 10%);
+            --border-radius: 2rem;
+            --card-border-radius: 1rem;
+            --btn-padding: 0.6rem 1rem;
+            --search-padding: 0.6rem 1rem;
+            --card-padding: 1rem;
+            --sticky-top-left: 5.4rem;
+            --sticky-top-right: -18rem;
+        }
+
+        /* General Styling */
+        body {
+            color: var(--color-dark);
+            font-family: 'Poppins', sans-serif;
+        }
+
+    
+
+        /* Home Section */
+        .home-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: transparent;
+            border-radius: var(--card-border-radius);
+            padding: var(--card-padding);
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .home-container h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            color:rgb(41, 211, 205)e ;
+        }
+
+        .home-container p {
+            font-size: 1.2rem;
+            color: var(--color-gray);
+            margin-bottom: 20px;
+        }
+
+        /* Buttons */
+        .buttons a {
+            margin: 10px;
+            padding: var(--btn-padding);
+            border-radius: var(--border-radius);
+            font-size: 1.2rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            border: none;
+            color: var(--color-white);
+        }
+
+        .btn-primary:hover {
+            background: var(--color-dark);
+        }
+
+        .btn-secondary {
+            background: var(--color-secondary);
+            border: none;
+            color: var(--color-dark);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-primary);
+            color: var(--color-white);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Home Section -->
+    <main class="container d-flex justify-content-center align-items-center">
+        <div class="home-container">
+            <img src="{% static 'assets1/soconnectlogo-2.png' %}" alt="SoConnect Logo" class="mb-3" width="150">
+
+            <h1>Welcome to SoConnect</h1>
+            <p>SoConnect is a social platform that helps you connect with people who share your hobbies and interests.</p>
+            <div class="buttons">
+                <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+                <a href="{% url 'signup' %}" class="btn btn-secondary">Sign Up</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS (Optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block content %}
+    <!-- Main Content -->
+    <div class="content">
+        <div class="create-post-container">
+            <h2 class="text-center mb-4">Create a New Post</h2>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label" for="content">Caption</label>
+                    <textarea id="content" class="form-control" name="content" rows="3" placeholder="Write a caption..."></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="image">Select an Image</label>
+                    <input type="file" id="image" name="image" class="form-control">
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary px-4 py-2">Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        /* Main Content Styling */
+        .content {
+            margin-left: 270px;
+            padding: 20px;
+        }
+
+        .create-post-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 60px auto;
+        }
+
+        h2 {
+            font-weight: 600;
+            font-size: 28px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 15px;
+        }
+
+        .btn-primary {
+            background-color: #6c63ff;
+            border-color: #6c63ff;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: 0.3s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            background-color: #574fd6;
+            border-color: #574fd6;
+        }
+    </style>
+{% endblock content %}
