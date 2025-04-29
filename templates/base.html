@@ -13,39 +13,67 @@
 <body>
     <nav>
         <div class="container">
+            <!-- Hamburger Button for Mobile -->
+            <button class="menu-button" onclick="toggleSidebar()">☰</button>
             <h2 class="logo">SoConnect</h2>
             <div class="create">
                 <a href="{% url 'create_post' %}" class="btn btn-primary">Create</a>
+    
+                <!-- Profile Photo -->
                 <div class="profile-photo">
-                    <a href="{% url 'profile' username=request.user.username %}"></a>
-                    {% if request.user.profile.image %}
-                        <img src="{{ request.user.profile.image.url }}" alt="Profile">
-                    {% else %}
-                        <img src="{% static 'images/default-profile.jpg' %}" alt="Profile">
-                    {% endif %}
+                    <a href="{% url 'profile' username=request.user.username %}">
+                        {% if request.user.profile.image %}
+                            <img src="{{ request.user.profile.image.url }}" alt="Profile">
+                        {% else %}
+                            <img src="{% static 'images/default-profile.jpg' %}" alt="Profile">
+                        {% endif %}
                     </a>
+                </div>
+    
+                <!-- Logout Button for Mobile -->
+                <div class="logout-mobile">
+                    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
                 </div>
             </div>
         </div>
     </nav>
+    
     <main>
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-3 col-lg-2 bg-light p-3 sidebar section">
                     <div class="left">
                         <div class="logo-container">
                             <img src="{% static 'assets1/soconnectlogo-2.png' %}" alt="Your Logo" class="logo">
                         </div>
-                        <a href="{% url 'dashboard' %}"><i class="uil uil-home"></i> Home</a>
-                        <a href="{% url 'notifications' %}"><i class="uil uil-bell"></i> Notifications</a>
-                        <a href="#"><i class="uil uil-envelope-alt"></i> Messages</a> 
-                        <a href="{% url 'profile' username=request.user.username %}"><i class="uil uil-user"></i>Profile</a>
-                        <a href="{% url 'edit_profile' username=request.user.username %}"><i class="uil uil-edit"></i>Edit Profile</a>
+                        <a href="{% url 'dashboard' %}">
+                            <i class="uil uil-home"></i>
+                            <span class="menu-text"> Home</span>
+                        </a>
+                        <a href="{% url 'notifications' %}">
+                            <i class="uil uil-bell"></i>
+                            <span class="menu-text"> Notifications </span>
+                        </a>
+                        <a href="{% url 'inbox' %}">
+                            <i class="uil uil-envelope-alt"></i>
+                            <span class="menu-text"> Messages </span>
+                        </a> 
+                        <a href="{% url 'profile' username=request.user.username %}">
+                            <i class="uil uil-user"></i>
+                            <span class="menu-text"> Profile</span>
+                        </a>
+                        <a href="{% url 'edit_profile' username=request.user.username %}">
+                            <i class="uil uil-edit"></i>
+                            <span class="menu-text"> Edit Profile</span>
+                        </a>
 
-                        <a href="{% url 'index' %}" class="btn btn-danger" style="color: white;">Logout</a>
+                        <a href="{% url 'index' %}" class="logout-link">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span class="menu-text"> Logout</span>
+                        </a>
                     </div>
                 </div>
-                <div class="col-md-9">
+                <div class="col-md-9 col-lg-10">
                     {% block content %}
                     <!--  Dashboard content will go here -->
                     {% endblock %}
@@ -56,5 +84,11 @@
     
     <script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.left');
+            sidebar.classList.toggle('show');
+        }
+    </script>
 </body>
-</html>
+</html>=

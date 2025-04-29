@@ -6,11 +6,8 @@ from django.dispatch import receiver
 from django.conf import settings
 
 class CustomUser(AbstractUser):
-    hobbies = models.CharField(max_length=255, blank=True, null=True)
-
     def __str__(self):
         return self.username
-
 
 User= get_user_model()
 

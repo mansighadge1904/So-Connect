@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'social',
     'posts',
-    'channels',
     'chat',
 ]
 
@@ -61,7 +60,6 @@ CHANNEL_LAYERS = {
         },
     },
 }
-ASGI_APPLICATION = 'SoConnect.asgi.application'
 
 ROOT_URLCONF = 'SoConnect.urls'
 
@@ -89,7 +87,7 @@ WSGI_APPLICATION = 'SoConnect.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'SoConnect',
+        'NAME': 'soconnect',
         'USER': 'root',
         'PASSWORD': 'Vw,qZ%*%#2Ey',
         'HOST': 'localhost',

@@ -4,7 +4,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-# from .forms import SignupForm, LoginForm
+from .forms import SignupForm
 from django.http import JsonResponse
 from django.db.models import Q
 from django.views.decorators.http import require_GET
@@ -21,22 +21,15 @@ def get_default_user():
 
 def signup_view(request):
     if request.method == "POST":
-        username = request.POST.get("username", "")
-        email = request.POST.get("email", "")
-        password = request.POST.get("password", "")
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your account has been created successfully!")
+            return redirect('login')  # Redirect to login page or dashboard
+    else:
+        form = SignupForm()
 
-        if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already taken. Try another one.")
-            return render(request, "signup.html")
-
-        user = User.objects.create_user(username=username, password=password, email=email)
-        user.save()
-        login(request, user)  # Log in the user immediately
-
-        messages.success(request, "Account created successfully!")
-        return redirect("login")  # Redirect to home page instead of /accounts/profile/
-
-    return render(request, "signup.html")
+    return render(request, 'signup.html', {'form': form})
 
 def login_view(request):
     if request.method == "POST":

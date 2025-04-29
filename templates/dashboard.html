@@ -5,80 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>SoConnect: Connecting people with shared hobbies</title>
     <link rel="stylesheet" href="{% static 'assets1/style.css' %}">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        /* Add custom styles for the notification dropdown */
-        .notification-container {
-            position: relative;
-            display: inline-block;
-        }
-
-        #notifications {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: #fff;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 10px 0;
-            margin-top: 10px;
-            z-index: 1000;
-            min-width: 250px;
-        }
-
-        #notifications.show {
-            display: block;
-        }
-
-        #notifications .notification-item {
-            padding: 10px 15px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            color: #333;
-        }
-
-        #notifications .notification-item:last-child {
-            border-bottom: none;
-        }
-
-        #notifications .notification-item:hover {
-            background-color: #f8f8f8;
-        }
-
-        #notifications .notification-item img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        #notifications .notification-item .notification-content {
-            flex: 1;
-        }
-
-        #notifications .notification-item .notification-content p {
-            margin: 0;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-
-        #notifications .notification-item .notification-content small {
-            display: block;
-            color: #888;
-            font-size: 0.75rem;
-        }
-
-        .notification-icon {
-            cursor: pointer;
-        }
 
         /* Additional styling for consistency with Instagram */
         body {
@@ -113,43 +46,80 @@
             margin-right: 2rem;
             color: #262626;
         }
+       /* Search Input Styling */
+        .search-input {
+            width: 100%;
+            padding: 12px 18px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 50px;
+            background-color: #f9f9f9;
+            color: #333;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            outline: none;
+            box-sizing: border-box;
+        }
 
-        .search-bar {
-            background-color: #efefef;
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
+        /* Focus Effect on Input */
+        .search-input:focus {
+            border-color: #4CAF50; /* Green border on focus */
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3); /* Green shadow */
+        }
+
+        /* Search Results Container */
+        .search-results {
+            position: absolute;
+            top: 50px;
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            border: 1px solid #ddd;
+        }
+
+        /* Individual Search Result Item */
+        .search-results .result-item {
             display: flex;
             align-items: center;
-            width: 200px;
+            padding: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
-        .search-bar input {
-            border: none;
-            background-color: transparent;
-            font-size: 0.9rem;
-            width: 100%;
-            margin-left: 0.5rem;
-        }
-        #search-results {
-            position: absolute;
-            background: white;
-            border: 1px solid #ccc;
-            width: 100%;
-            max-height: 200px;
-            overflow-y: auto;
-            display: none;
-            z-index: 1000;
+        /* Hover Effect for Results */
+        .search-results .result-item:hover {
+            background-color: #f1f1f1;
+            transform: scale(1.02); /* Slight zoom effect on hover */
         }
 
-        #search-results a {
-            display: block;
-            padding: 10px;
-            text-decoration: none;
-            color: black;
+        /* Profile Image in Results */
+        .search-results .result-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+            transition: transform 0.2s ease;
         }
 
-        #search-results a:hover {
-            background: #f0f0f0;
+        /* User Name */
+        .search-results .result-item .user-name {
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        /* Display 'No Results' if no users match */
+        .search-results .no-results {
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+            font-style: italic;
+            color: #777;
+            background-color: #f9f9f9;
         }
 
         .create {
@@ -241,49 +211,121 @@
             flex: 1;
             max-width: 614px;
         }
-
+        /* Stories Section */
         .stories {
             display: flex;
-            overflow-x: auto;
-            margin-bottom: 1rem;
-            padding: 1rem 0;
+            overflow-x: scroll;
+            padding: 20px 0;
+            gap: 10px;
+        }
+
+        .story {
+            position: relative;
+            width: 100px; /* Set width of each story item */
+            height: 150px; /* Set height of each story item */
+            border-radius: 10px;
             background-color: #fff;
-            border: 1px solid #dbdbdb;
-            border-radius: 8px;
-            padding-left: 10px;
-        }
-
-        .stories::-webkit-scrollbar {
-            display: none;
-        }
-
-        .stories .story {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0 0.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             cursor: pointer;
-            flex: 0 0 auto;
-        }
-
-        .stories .story img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #ff4d6d;
-            margin-bottom: 0.5rem;
-        }
-
-        .stories .story .name {
-            font-size: 0.8rem;
-            color: #262626;
-            white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 70px;
+            text-align: center;
+            transition: transform 0.2s ease;
         }
 
+        .story:hover {
+            transform: scale(1.05);
+        }
+
+        .story-img, .story-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .story-text {
+            padding: 10px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .name {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Modal Styling */
+        #storyModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;  /* Modal width */
+            height: 80%; /* Modal height */
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            overflow: hidden; /* Ensures content doesn't overflow */
+        }
+
+        /* Story content inside modal */
+        #storyContent {
+            position: relative;
+            max-width: 100%;
+            max-height: 100%;
+            overflow: hidden;
+        }
+
+        /* Image or Video inside the modal */
+        #storyContent img,
+        #storyContent video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Maintains aspect ratio */
+        }
+
+        /* Close Button Styling */
+        #closeStory {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10000;
+        }
+
+        #closeStory i {
+            font-size: 18px;
+            color: #000;
+        }
+         /* Add a fade-in effect when the modal appears */
+        #storyModal.fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Fade-in effect */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
         .feeds {
             margin-top: 1rem;
         }
@@ -376,8 +418,79 @@
         .like-icon.unliked {
             color: #262626;
         }
+        /* Comment Section */
+        .comments-container {
+            display: flex;
+            flex-direction: column; /* Stack comments vertically */
+            gap: 12px; /* Space between each comment */
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #f9f9f9; /* Light background for the comment section */
+            border-radius: 10px; /* Rounded corners for the comment section */
+            max-height: 300px;
+            overflow-y: auto; /* Allow scrolling if there are too many comments */
+        }
 
+        /* Individual Comment */
+        .comments-container p {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+        }
 
+        /* Username in Comment */
+        .comments-container strong {
+            font-weight: bold;
+            color: #007bff; /* Highlight username */
+        }
+
+        /* Comment Input Field */
+        .comments-container input[type="text"] {
+            padding: 8px 15px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            width: 100%;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        /* Focused Input Field */
+        .comments-container input[type="text"]:focus {
+            border-color: #007bff;
+        }
+
+        /* Submit Button */
+        .comments-container button[type="submit"] {
+            padding: 8px 15px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+
+        /* Button Hover Effect */
+        .comments-container button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* Adjustments for small screens */
+        @media (max-width: 576px) {
+            .comments-container {
+                padding: 8px;
+            }
+            .comments-container input[type="text"] {
+                padding: 6px 12px;
+            }
+            .comments-container button[type="submit"] {
+                padding: 6px 12px;
+            }
+        }
+
+        .comment-form button:hover {
+            background-color: #e0e0e0;
+        }
         .feed .bookmark {
             cursor: pointer;
             color: #262626;
@@ -408,8 +521,9 @@
     <nav>
         <div class="container">
             <h2 class="logo">SoConnect</h2>
-            <input type="text" id="search-input" placeholder="Search users..." autocomplete="off">
-            <div id="search-results" class="dropdown-results"></div>          
+            <input type="text" id="search-input" placeholder="Search users..." autocomplete="off" class="form-control" >
+            <div id="search-results" class="dropdown-results"></div>  
+
             <div class="create">
                 <a href="{% url 'create_post' %}" class="btn btn-primary">Create</a>
                 
@@ -433,28 +547,46 @@
                 </div>
                 <a href="{% url 'dashboard' %}"><i class="uil uil-home"></i> Home</a>
                         <a href="{% url 'notifications' %}"><i class="uil uil-bell"></i> Notifications</a>
-                        <a href="#"><i class="uil uil-envelope-alt"></i> Messages</a> 
+                        <a href="{% url 'inbox' %}"><i class="uil uil-envelope-alt"></i> Messages</a> 
                         <a href="{% url 'profile' username=request.user.username %}"><i class="uil uil-user"></i>Profile</a>
                         <a href="{% url 'edit_profile' username=request.user.username %}"><i class="uil uil-edit"></i>Edit Profile</a>
             </div>
             <div class="middle">
                 <div class="stories">
                     {% for story in stories %}
-                        <div class="story">
+                        <div class="story" data-story-id="{{ story.id }}">
                             {% if story.image %}
                                 <img src="{{ story.image.url }}" alt="Story Image" class="story-img">
+                            {% elif story.video %}
+                                <video class="story-video" controls>
+                                    <source src="{{ story.video.url }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            {% elif story.text %}
+                                <p class="story-text">{{ story.text }}</p>
                             {% else %}
-                                <p>No image</p>
+                                <p>No image/video</p>
                             {% endif %}
                             <p class="name">@{{ story.user.username }}</p>
                             <p>DEBUG: {{ story.id }}</p>
                         </div>
                     {% empty %}
                         <p>No stories available</p>
-                        <p>DEBUG: Stories queryset is empty</p>
                     {% endfor %}
                 </div>
-                
+                <!-- Story Modal -->
+                <div id="storyModal" style="display: none; position: fixed; top: 0; left: 0; 
+                    width: 30%; height: 40%; background-color: rgba(0, 0, 0, 0.8); 
+                    justify-content: center; align-items: center; z-index: 9999;">
+                    
+                    <div id="storyContent"></div>
+                    
+                    <!-- Close Button -->
+                    <button id="closeStory">
+                        <i class="fas fa-times"></i> <!-- FontAwesome icon for close -->
+                    </button>
+                </div>>
+
                 <div class="feeds">
                     {% for post in posts %}
                         <div class="feed" data-post-id="{{ post.id }}">
@@ -482,14 +614,23 @@
                                 {% endif %}
                             </div>
                             <div class="action-buttons">
+                                <!-- Interaction Buttons -->
                                 <div class="interaction-buttons">
+                                    <!-- Like -->
                                     <button class="like-button" data-post-id="{{ post.id }}">
                                         <span class="like-icon {% if request.user in post.likes.all %}liked-fill{% else %}unliked{% endif %}">
                                             <i class="{% if request.user in post.likes.all %}fas fa-heart{% else %}far fa-heart{% endif %}"></i>
                                         </span>
                                         <span class="like-count" id="like-count-{{ post.id }}">{{ post.likes.count }}</span>
-                                    </button>                                                                        
-                                    <span><i class="ui uil-comment-dots"></i></span>
+                                    </button>
+
+                                    <!-- Comment -->
+                                    <button class="toggle-comments" data-post-id="{{ post.id }}" style="background: none; border: none; cursor: pointer;">
+                                        <i class="uil uil-comment-dots"></i>
+                                        <span class="comment-count">{{ post.comments.count }}</span>
+                                    </button>
+
+                                    <!-- Share -->
                                     <span><i class="ui uil-share-alt"></i></span>
                                 </div>
                                 <div class="bookmark">
@@ -498,6 +639,19 @@
                             </div>
                             <div class="caption">
                                 <p><b>{{ post.user.username }}</b> {{ post.caption }}</p>
+                            </div>
+                            <!-- Comments Section: Moved Below Caption -->
+                            <div class="comments-container" id="comments-{{ post.id }}" style="display: none; margin-left: 40px; margin-top: 10px;">
+                                {% for comment in post.comments.all %}
+                                    <p><strong>{{ comment.user.username }}</strong> {{ comment.content }}</p>
+                                {% endfor %}
+                                <form method="POST" action="{% url 'add_comment' post.id %}">
+                                    {% csrf_token %}
+                                    <div style="display: flex; gap: 5px; margin-top: 8px;">
+                                        <input type="text" name="content" placeholder="Add a comment..." class="form-control" required style="flex: 1; border-radius: 25px;">
+                                        <button type="submit" class="btn btn-light">Post</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     {% empty %}
@@ -512,35 +666,32 @@
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <!-- <script src="{% static 'assets1/script.js' %}"></script> -->
     <script>
-        document.querySelectorAll('.like-button').forEach(button => {
-            button.addEventListener('click', function (e) {
-                e.preventDefault();
-        
-                const postId = this.getAttribute('data-post-id');
-                const likeIcon = this.querySelector('.like-icon i');
-                const likeCount = document.getElementById(`like-count-${postId}`);
-        
-                fetch(`/like-post/${postId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}',
-                        'X-Requested-With': 'XMLHttpRequest'
+        $(document).ready(function() {
+            $(".like-button").click(function(event) {
+                event.preventDefault();  // Prevent page reload on click
+
+                var postId = $(this).data("post-id");  // Get the post id
+                var likeButton = $(this);
+                $.ajax({
+                    url: '/posts/like_post/' + postId + '/',  // Ensure this is correct
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                    },
+                    success: function(response) {
+                        // Update the like count
+                        $('#like-count-' + postId).text(response.like_count);
+                        
+                        // Update the heart icon class based on whether liked or unliked
+                        if (response.liked) {
+                            likeButton.find('.like-icon i').removeClass('far').addClass('fas');
+                        } else {
+                            likeButton.find('.like-icon i').removeClass('fas').addClass('far');
+                        }
                     }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.liked) {
-                        likeIcon.classList.remove('far');
-                        likeIcon.classList.add('fas');
-                    } else {
-                        likeIcon.classList.remove('fas');
-                        likeIcon.classList.add('far');
-                    }
-                    likeCount.textContent = data.likes_count;
                 });
             });
         });
-        
         document.getElementById('search-input').addEventListener('input', function() {
             const query = this.value;
             const resultsBox = document.getElementById('search-results');
@@ -566,9 +717,119 @@
                 resultsBox.style.display = 'none';
             }
         });
+        document.querySelectorAll('.toggle-comments').forEach(button => {
+            button.addEventListener('click', () => {
+                const postId = button.dataset.postId;
+                const commentBox = document.getElementById(`comments-${postId}`);
+                commentBox.style.display = (commentBox.style.display === 'none') ? 'block' : 'none';
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+    const stories = Array.from(document.querySelectorAll('.story'));
+    const storyModal = document.getElementById('storyModal');
+    const storyContent = document.getElementById('storyContent');
+    const closeStory = document.getElementById('closeStory');
+    let currentStoryIndex = 0;
+    let autoAdvanceTimeout;
 
-        </script>
-        
+    function showStory(index) {
+        console.log('showStory function called with index: ', index);  // Debugging log
+
+        if (index >= stories.length) {
+            storyModal.style.display = 'none';
+            return;
+        }
+
+        const story = stories[index];
+        const storyId = story.getAttribute('data-story-id');
+        console.log('Story ID:', storyId);  // Debugging log
+
+        const img = story.querySelector('img');
+        const video = story.querySelector('video');
+        const text = story.querySelector('.story-text');
+
+        storyContent.innerHTML = '';  // Clear the modal content
+
+        // Display the corresponding content in the modal
+        if (img) {
+            const modalImg = document.createElement('img');
+            modalImg.src = img.src;
+            storyContent.appendChild(modalImg);
+        } else if (video) {
+            const modalVideo = document.createElement('video');
+            modalVideo.src = video.querySelector('source').src;
+            modalVideo.controls = true;
+            modalVideo.autoplay = true;
+            storyContent.appendChild(modalVideo);
+        } else if (text) {
+            const modalText = document.createElement('p');
+            modalText.textContent = text.textContent;
+            storyContent.appendChild(modalText);
+        }
+
+        // Show modal
+        storyModal.style.display = 'flex';
+
+        // Mark story as viewed
+        fetch(`/posts/mark_as_viewed/${storyId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            body: JSON.stringify({ 'story_id': storyId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                story.classList.add('viewed');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+
+        // Auto-advance after 5 seconds
+        clearTimeout(autoAdvanceTimeout);
+        autoAdvanceTimeout = setTimeout(() => {
+            currentStoryIndex += 1;
+            showStory(currentStoryIndex);
+        }, 5000); // Adjust timing here (ms)
+    }
+
+    // Add click event listener to each story
+    stories.forEach((story, index) => {
+        story.addEventListener('click', function () {
+            console.log('Story clicked:', story);  // Debugging log
+            currentStoryIndex = index;
+            showStory(currentStoryIndex);
+        });
+    });
+
+    // Close the modal when the close button is clicked
+    closeStory.addEventListener('click', () => {
+        storyModal.style.display = 'none';
+        clearTimeout(autoAdvanceTimeout);
+    });
+
+    // Close the modal when clicking outside of the modal content
+    storyModal.addEventListener('click', (e) => {
+        if (e.target === storyModal) {
+            storyModal.style.display = 'none';
+            clearTimeout(autoAdvanceTimeout);
+        }
+    });
+
+    // Close the modal when pressing the "Escape" key
+    document.addEventListener('keydown', function (e) {
+        if (e.key === "Escape") {
+            storyModal.style.display = 'none';
+            clearTimeout(autoAdvanceTimeout);
+        }
+    });
+});
+
+    </script>
     
 </body>
 </html>

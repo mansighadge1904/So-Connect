@@ -1,4 +1,4 @@
-
+/* Base Styles */
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -7,7 +7,7 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow-x: hidden; /* Prevent horizontal scrollbar */
+    overflow-x: hidden;
 }
 
 nav {
@@ -15,8 +15,8 @@ nav {
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 10; /* Make sure it's above the content */
-    height: 6.5rem; /* Height of your navbar */
+    z-index: 10;
+    height: 6.5rem;
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -25,9 +25,18 @@ nav .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px; /* Increased max-width */
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+}
+
+.menu-button {
+    display: none;
+    font-size: 2rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #262626;
 }
 
 nav .logo {
@@ -35,23 +44,6 @@ nav .logo {
     font-size: 2rem;
     margin-right: 2rem;
     color: #262626;
-}
-
-.search-bar {
-    background-color: #efefef;
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
-    display: flex;
-    align-items: center;
-    width: 200px;
-}
-
-.search-bar input {
-    border: none;
-    background-color: transparent;
-    font-size: 0.9rem;
-    width: 100%;
-    margin-left: 0.5rem;
 }
 
 .create {
@@ -67,6 +59,7 @@ nav .logo {
     border-radius: 4px;
     font-size: 0.9rem;
     font-weight: 600;
+    text-decoration: none;
 }
 
 .btn-primary:hover {
@@ -76,7 +69,6 @@ nav .logo {
 .profile-photo {
     width: 2rem;
     height: 2rem;
-    border-radius: 50%;
     overflow: hidden;
     border: 1px solid #dbdbdb;
 }
@@ -86,45 +78,62 @@ nav .logo {
     height: 100%;
     object-fit: cover;
 }
+.btn-danger {
+    background-color: rgb(169, 4, 4);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    width: 80px;
+    margin-left: 20px;
+    margin-top: 20px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.btn-danger:hover {
+    background-color: rgb(244, 138, 138);
+}
+.logout-mobile {
+    display: none;
+}
 
 main {
-    margin-top: 6.5rem; /* Matches actual height of your nav bar */
+    margin-top: 6.5rem;
     background-color: #fafafa;
     padding: 2rem;
-    padding-top: 1rem; /* Ensure some padding is added */
     min-height: calc(100vh - 6.5rem);
-    box-sizing: border-box;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    overflow-y: hidden; /* Ensure content doesn't overflow */
 }
 
-main .container {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    max-width: 1200px; /* Increased max-width */
-    margin: 0 auto;
-    padding: 0 20px;
-}
-.row {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    
-}
 .left {
-    width: 250px;
+    width: 180px;
     position: fixed;
-    top:6.6rem;
-    left: 10rem;
+    top: 6.5rem;
+    left: 6rem;
     margin-right: 2rem;
-    margin-top: 1rem;
-    height: calc(100vh - 5rem);
+    height: calc(100vh - 6.5rem);
+    overflow-y: auto;
+    transition: transform 0.5s ease;
+}
+
+.left.show {
+    display: block;
+    position: fixed;
+    top: 6.5rem;
+    left: 0;
+    background-color: #fff;
+    width: 80px;
+    height: calc(100vh - 6.5rem);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 9;
     overflow-y: auto;
 }
-
+.menu-text {
+    display: inline;
+}
 .left .logo-container {
     margin-bottom: 2rem;
 }
@@ -152,25 +161,97 @@ main .container {
     margin-right: 1rem;
     font-size: 1.2rem;
 }
-.btn-danger {
-    background-color: rgb(169, 4, 4);
+
+.logout-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
     color: #fff;
-    padding: 0.5rem 1rem;
-    border: 5px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    width: 80px;
-    margin-left: 20px;
-    margin-top: 20px;
+    font-weight: 500;
+    text-decoration: none;
+    background-color: rgb(169, 4, 4);
+    margin-top: 1.5rem;
+    transition: background-color 0.2s ease;
 }
-.btn-danger:hover {
-    background-color: rgb(244, 138, 138);
+
+.logout-link:hover {
+    background-color: rgb(66, 60, 60);
 }
+
+.logout-link i {
+    margin-right: 1rem;
+    font-size: 1.2rem;
+}
+
+
 .main-wrapper {
     padding: 20px;
     max-width: 1200px;
     margin: auto;
-    flex-grow: 1; /* This will allow it to expand and fill available space */
-    overflow-y: auto; /* Make sure it scrolls when content overflows */
+    flex-grow: 1;
+    overflow-y: auto;
 }
 
+/* Media Query for Mobile and Small Screens */
+@media (max-width: 768px) {
+    nav .container {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .logo-container {
+        display: none;
+    }
+    .logo {
+        font-size: 1.5rem;
+    }
+    .menu-text {
+        display: none;
+    }
+    .create {
+        gap: 1rem;  /* Maintain gap between elements */
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .profile-photo {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    .logout-mobile {
+        display: block;
+        margin-left: 1rem;
+    }
+
+    .menu-button {
+        display: block;
+    }
+
+    .left {
+        display: none; /* Hide the sidebar by default */
+        transform: translateX(-100%);
+    }
+
+    .left.show {
+        display: block;
+        transform: translateX(0); /* Slide in */
+    }
+
+    main {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .search-bar {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    /* Adjust buttons on small screen */
+    .btn-primary, .btn-danger {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+}

@@ -1,15 +1,14 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import Profile, CustomUser # Import Post here to avoid errors
-from users import models  # Import models to avoid Hobby import issue
+from django.contrib.auth.forms import UserCreationForm
+from .models import Profile, Hobby
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
 class SignupForm(UserCreationForm):
-    hobbies = forms.ModelMultipleChoiceField(
-        queryset=models.Hobby.objects.all(),  # Use models.Hobby to avoid ImportError
-        widget=forms.CheckboxSelectMultiple,
-        required=False
+    hobbies = forms.CharField(
+        widget=forms.Textarea(attrs={'placeholder': 'Enter your hobbies, separated by commas.'}),
+        required=True
     )
 
     class Meta:
@@ -19,22 +18,20 @@ class SignupForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         if commit:
-            user.save()
-            profile = Profile.objects.create(user=user)
-            profile.hobbies.set(self.cleaned_data['hobbies'])  # Set hobbies
+            user.save()  # Save the user first
+            
+            # The profile will be created automatically via the signal
+            profile = Profile.objects.get(user=user)
+            
+            # Get hobbies entered by the user
+            hobbies = self.cleaned_data.get('hobbies', '')
+            
+            # Split the hobbies string by commas, remove extra spaces, and add them
+            hobby_list = [hobby.strip() for hobby in hobbies.split(',') if hobby.strip()]
+            
+            # Create or get each hobby and add to the profile
+            for hobby_name in hobby_list:
+                hobby, created = Hobby.objects.get_or_create(name=hobby_name)
+                profile.hobbies.add(hobby)
+
         return user
-
-class LoginForm(AuthenticationForm):
-    pass  # Using Django's default login form
-
-class HobbyForm(forms.Form):
-    hobbies = forms.ModelMultipleChoiceField(
-        queryset=models.Hobby.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-
-class CustomUserForm(forms.ModelForm):
-    class Meta:
-        model = CustomUser
-        fields = ['username', 'email', 'hobbies'] 

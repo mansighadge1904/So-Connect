@@ -13,13 +13,14 @@ class Message(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
 
+    @staticmethod
     def send_message(from_user, to_user, body):
         sender_message = Message(
             user = from_user,
             sender = from_user,
             reciepient = to_user,
             body = body,
-            is_read = True
+            is_read = False
         )
         sender_message.save()
 
@@ -28,18 +29,40 @@ class Message(models.Model):
             sender = from_user,
             reciepient = from_user,
             body = body,
-            is_read = True
+            is_read = False
         )
-        reciepient_message.save()
+        
         return sender_message
     
+    # def get_message(user):
+    #     users = []
+    #     messages = Message.objects.filter(user=user).values('reciepient').annotate(last=Max('date')).order_by("-last")
+    #     for message in messages:
+    #         users.append({
+    #             'user' : User.objects.get(pk=message['reciepient']),
+    #             'last' : message['last'],
+    #             'unread': Message.objects.filter(user=user, reciepient__pk=message['reciepient'], is_read=False)
+    #         })
+    #     return users
     def get_message(user):
         users = []
-        messages = Message.objects.filter(user=user).values('reciepient').annotate(last=Max('date')).order_by("-last")
+        
+        # Get messages where the logged-in user is either the sender or recipient
+        messages = Message.objects.filter(
+            models.Q(sender=user) | models.Q(reciepient=user)
+        ).values('sender', 'reciepient').annotate(last=Max('date')).order_by("-last")
+        
         for message in messages:
+            # Check if the logged-in user is the sender or the recipient
+            if message['sender'] != user.id:
+                other_user = User.objects.get(pk=message['sender'])  # If the logged-in user is the recipient
+            else:
+                other_user = User.objects.get(pk=message['reciepient'])  # If the logged-in user is the sender
+            
             users.append({
-                'user' : User.objects.get(pk=message['reciepient']),
-                'last' : message['last'],
-                'unread': Message.objects.filter(user=user, reciepient__pk=message['reciepient'], is_read=False)
+                'user': other_user,
+                'last': message['last'],
+                'unread': Message.objects.filter(user=user, reciepient__pk=other_user.id, is_read=False)
             })
         return users
+
