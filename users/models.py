@@ -24,6 +24,8 @@ class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile")
     hobbies = models.ManyToManyField(Hobby, related_name='profiles', blank=True)
     image = models.ImageField(upload_to="profile_pics/", default="default.jpg")
+    followers = models.ManyToManyField('self', related_name='following', symmetrical=False, blank=True)  # Add this field
+
 
     def __str__(self):
         return self.user.username

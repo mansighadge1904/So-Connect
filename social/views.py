@@ -10,7 +10,6 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-
 @login_required
 def follow_user(request, user_id):
     followed_user = User.objects.get(id=user_id)
@@ -35,18 +34,50 @@ def follow_user(request, user_id):
         )
         notification.save()
 
-        return JsonResponse({'success': True, 'action': 'follow'})
+        # Get updated follower and following counts
+        follower_count = followed_user.profile.followers.count()
+        following_count = request.user.profile.following.count()
+
+        return JsonResponse({
+            'success': True, 
+            'action': 'follow',
+            'follower_count': follower_count,
+            'following_count': following_count
+        })
     else:
         # If already following, unfollow
         Follow.objects.filter(follower=request.user, following=followed_user).delete()
-        return JsonResponse({'success': True, 'action': 'unfollow'})
+
+        # Get updated follower and following counts
+        follower_count = followed_user.profile.followers.count()
+        following_count = request.user.profile.following.count() 
+
+
+        return JsonResponse({
+            'success': True, 
+            'action': 'unfollow',
+            'follower_count': follower_count,
+            'following_count': following_count
+        })
+
 
 
 @login_required
 def unfollow_user(request, user_id):
     user_to_unfollow = get_object_or_404(User, id=user_id)
     Follow.objects.filter(follower=request.user, following=user_to_unfollow).delete()
-    return redirect('profile', username=user_to_unfollow.username)
+
+    # Get updated follower and following counts
+    follower_count = user_to_unfollow.profile.followers.count()
+    following_count = request.user.profile.followers.count()
+
+    return JsonResponse({
+        'success': True,
+        'action': 'unfollow',
+        'follower_count': follower_count,
+        'following_count': following_count
+    })
+
 
 @login_required
 def like_post(request, post_id):

@@ -1,5 +1,90 @@
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Post Story</button>
-</form>
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .story-form-container {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .story-form-container:hover {
+        transform: scale(1.01);
+    }
+
+    .form-title {
+        font-weight: 600;
+        margin-bottom: 25px;
+        text-align: center;
+        color: #333;
+    }
+
+    .custom-file-input {
+        border: 2px dashed #ccc;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background-color: #f9f9f9;
+    }
+
+    .custom-file-input:hover {
+        background-color: #f0f0f0;
+        border-color: #007bff;
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 12px;
+        font-weight: 600;
+        border-radius: 10px;
+    }
+
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #555;
+        text-decoration: none;
+    }
+
+    .back-link:hover {
+        color: #007bff;
+        text-decoration: underline;
+    }
+</style>
+
+<div class="story-form-container">
+    <h2 class="form-title">📸 Share Your Story</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Image Upload -->
+        <div class="mb-4">
+            <label for="id_image" class="form-label">Upload an Image</label>
+            <div class="custom-file-input">
+                {{ form.image }}
+            </div>
+        </div>
+
+        <!-- Video Upload -->
+        <div class="mb-4">
+            <label for="id_video" class="form-label">Upload a Video</label>
+            <div class="custom-file-input">
+                {{ form.video }}
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary btn-submit">Submit Story</button>
+    </form>
+
+    <a href="{% url 'dashboard' %}" class="back-link">← Back to Dashboard</a>
+</div>
+{% endblock %}

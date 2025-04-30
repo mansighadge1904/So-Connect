@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <div class="profile-container">
     <main class="profile-content">
         <div class="profile-header">
@@ -30,16 +32,17 @@
                     <span><strong>Following:</strong> {{ following_count }}</span>
                 </div>
                 <!-- Follow/Unfollow Button -->
-                {% if request.user != user_profile %}
-                    <form action="{% url 'follow_user' user_profile.id %}" method="POST">
-                        {% csrf_token %}
-                        {% if is_following %}
-                            <button type="submit" class="btn btn-danger" style="padding: 5px; width: 80px;">Unfollow</button>
-                        {% else %}
-                            <button type="submit" class="btn btn-primary">Follow</button>
-                        {% endif %}
-                    </form>
+                {% if request.user != user_profile_obj %}
+                <form id="follow-form-{{ user_profile_obj.id }}" action="{% url 'follow_user' user_profile_obj.id  %}" method="POST">
+                    {% csrf_token %}
+                    {% if is_following %}
+                        <button type="button" class="btn btn-danger follow-btn" data-user-id="{{ user_profile_obj.id }}" style="padding: 5px; width: 80px;">Unfollow</button>
+                    {% else %}
+                        <button type="button" class="btn btn-primary follow-btn" data-user-id="{{ user_profile_obj.id }}">Follow</button>
+                    {% endif %}
+                </form>
                 {% endif %}
+
             </div>
         </div>
 
@@ -280,4 +283,38 @@
         }
     }
 </style>
+<script>
+    $(document).ready(function() {
+         $('.follow-btn').click(function(e) {
+             e.preventDefault();
+ 
+             const button = $(this);
+             const userId = button.data('user-id');
+             const actionUrl = button.hasClass('btn-danger') ? `/social/unfollow/${userId}/` : `/social/follow/${userId}/`;
+ 
+             $.ajax({
+                 url: actionUrl,
+                 method: 'POST',
+                 data: {
+                     csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val()
+                 },
+                 success: function(response) {
+                     if (response.success) {
+                         if (response.action === 'unfollow') {
+                             button.text('Follow');
+                             button.removeClass('btn-danger').addClass('btn-primary');
+                         } else {
+                             button.text('Unfollow');
+                             button.removeClass('btn-primary').addClass('btn-danger');
+                         }
+                         $('#follower-count').text(response.follower_count);
+                         $('#following-count').text(response.following_count);
+                     } else {
+                         alert(response.message);
+                     }
+                 }
+             });
+         });
+     });
+ </script>
 {% endblock content %}

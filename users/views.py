@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 from django.views.decorators.http import require_GET
 from .models import Hobby, Profile
-from posts.models import Post
+from posts.models import Post, Story
 from social.models import Follow
 
 from django.contrib import messages
@@ -57,6 +57,8 @@ def profile_view(request, username):
     post_count = posts.count()
     follower_count = Follow.objects.filter(following=user_profile_obj).count()
     following_count = Follow.objects.filter(follower=user_profile_obj).count()
+    stories = Story.objects.filter(user=user_profile_obj).order_by('-created_at')
+
 
     is_following = False
     if request.user.is_authenticated and request.user != user_profile_obj:
@@ -77,6 +79,9 @@ def profile_view(request, username):
         'follower_count': follower_count,
         'following_count': following_count,
         'is_following': is_following,
+        'is_own_profile': request.user == user_profile_obj,
+        'user_profile_obj': user_profile_obj,
+        'stories': stories, 
     }
     return render(request, 'profile.html', context)
 
@@ -118,22 +123,8 @@ def edit_profile(request, username):
         "profile_hobbies": ", ".join([hobby.name for hobby in profile.hobbies.all()]),
     })
 
-@login_required
-def follow_user(request, user_id):
-    user_to_follow = get_object_or_404(User, id=user_id)
-    request.user.profile.followers.add(user_to_follow)
-    return redirect('profile', user_id=user_id)
-
-@login_required
-def unfollow_user(request, user_id):
-    user_to_unfollow = get_object_or_404(User, id=user_id)
-    request.user.profile.followers.remove(user_to_unfollow)
-    return redirect('profile', user_id=user_id)
 
 
-
-def home_view(request):
-    return render(request, "users/home.html")
 
 @require_GET
 def search_users_ajax(request):

@@ -8,6 +8,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.utils.timezone import now
 from django.urls import reverse
+from datetime import timedelta
+from django.utils import timezone
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -83,7 +85,7 @@ def story_detail(request, id):
     story = get_object_or_404(Story, id=id)
 
     # Return the story detail to be rendered inside the modal
-    return render(request, 'posts/story_detail.html', {'story': story})  
+    return render(request, 'story_detail.html', {'story': story})  
       
 @login_required
 def create_story(request):
@@ -92,6 +94,7 @@ def create_story(request):
         if form.is_valid():
             story = form.save(commit=False)
             story.user = request.user
+            story.expires_at = timezone.now() + timedelta(hours=24)
             story.save()
             return redirect('dashboard')  # Redirect back to the dashboard
     else:
@@ -101,13 +104,18 @@ def create_story(request):
 @login_required
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    if post.likes.filter(id=request.user.id).exists():  # If user has already liked, unlike it
-        post.likes.remove(request.user)
-    else:  # Add like if user hasn't liked the post yet
-        post.likes.add(request.user)
-    
-    return HttpResponseRedirect(reverse('post_detail', args=[post.id]))
+    liked = False
 
+    if post.likes.filter(id=request.user.id).exists():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+        liked = True
+
+    return JsonResponse({
+        'liked': liked,
+        'like_count': post.likes.count()
+    })
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     like_count = post.likes.count()  # This will give the number of likes

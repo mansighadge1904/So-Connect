@@ -553,6 +553,9 @@
             </div>
             <div class="middle">
                 <div class="stories">
+                    
+                    <a href="{% url 'create_story' %}" class="btn btn-primary">Create Story</a>
+                   
                     {% for story in stories %}
                         <div class="story" data-story-id="{{ story.id }}">
                             {% if story.image %}
@@ -575,17 +578,17 @@
                     {% endfor %}
                 </div>
                 <!-- Story Modal -->
-                <div id="storyModal" style="display: none; position: fixed; top: 0; left: 0; 
-                    width: 30%; height: 40%; background-color: rgba(0, 0, 0, 0.8); 
+                <div id="storyModal" style="display: none; position: fixed; top: 400px; left: 800px; 
+                    width: 25%; height: 70%; background-color: rgba(0, 0, 0, 0.8); 
                     justify-content: center; align-items: center; z-index: 9999;">
                     
                     <div id="storyContent"></div>
                     
                     <!-- Close Button -->
                     <button id="closeStory">
-                        <i class="fas fa-times"></i> <!-- FontAwesome icon for close -->
+                        <i class="fas fa-times"></i> 
                     </button>
-                </div>>
+                </div>
 
                 <div class="feeds">
                     {% for post in posts %}
@@ -673,7 +676,7 @@
                 var postId = $(this).data("post-id");  // Get the post id
                 var likeButton = $(this);
                 $.ajax({
-                    url: '/posts/like_post/' + postId + '/',  // Ensure this is correct
+                    url: '/posts/like-post/' + postId + '/',  // Ensure this is correct
                     type: 'POST',
                     data: {
                         'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),

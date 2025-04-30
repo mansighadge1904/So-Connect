@@ -89,11 +89,14 @@
                 <input type="email" class="form-control" name="email" placeholder="Email" required>
             </div>
             <div class="mb-3">
+                <small style="color: #e1ccf0;">**Password must be at least 8 characters, including letters and numbers.</small>
                 <input type="password" class="form-control" name="password1" placeholder="Password" required>
+               
             </div>
             <div class="mb-3">
                 <input type="password" class="form-control" name="password2" placeholder="Confirm Password" required>
             </div>
+            
             
             <div class="mb-3">
                 <label for="hobbies" class="form-label">Hobbies</label>
@@ -104,7 +107,7 @@
         </form>
 
         <p class="mt-3">
-            Already have an account? <a href="{% url 'login' %}" style="color: #6a0dad;">Login</a>
+            Already have an account? <a href="{% url 'login' %}" style="color: #a5a0a8;">Login</a>
         </p>
     </div>
 

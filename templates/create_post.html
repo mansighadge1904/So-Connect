@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 <!-- Main Content -->
 <div class="content">
@@ -7,72 +7,187 @@
         <h2 class="text-center mb-4">Create a New Post</h2>
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="mb-3">
-                <label class="form-label" for="content">Caption</label>
+            <div class="form-group">
+                <label for="content">Caption:</label>
                 <textarea id="content" class="form-control" name="caption" rows="3" placeholder="Write a caption..."></textarea>
             </div>
-            <div class="mb-3">
-                <label class="form-label" for="image">Select an Image</label>
+
+            <div class="form-group">
+                <label for="image">Select an Image:</label>
                 <input type="file" id="image" name="image" class="form-control">
             </div>
 
-            <div class="mb-3">
-                <label class="form-label" for="hobbies">Enter Hobbies (comma separated)</label>
+            <div class="form-group">
+                <label for="hobbies">Hobbies (comma-separated):</label>
                 {{ form.hobbies }}
             </div>
 
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary px-4 py-2">Post</button>
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">Post</button>
             </div>
         </form>
     </div>
 </div>
 
 <style>
-    /* Main Content Styling */
     .content {
-        margin-left: 270px;
+        margin-left: 250px;
         padding: 20px;
+        background-color: #f4f6f8;
+        min-height: 100vh;
+        transition: margin-left 0.3s ease;
     }
 
     .create-post-container {
-        background: #fff;
+        background: #ffffff;
         padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.1);
-        max-width: 600px;
-        margin: 60px auto;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        max-width: 700px;
+        margin: auto;
+        margin-top: 50px;
     }
 
-    h2 {
-        font-weight: 600;
-        font-size: 28px;
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        margin-bottom: 15px;
     }
 
-    .form-label {
+    .form-group label {
+        margin-bottom: 5px;
         font-weight: 500;
-        margin-bottom: 6px;
-        display: block;
     }
 
     .form-control {
+        padding: 10px;
         border-radius: 8px;
-        padding: 10px 12px;
+        border: 1px solid #ccc;
         font-size: 15px;
     }
 
     .btn-primary {
         background-color: #6c63ff;
         border-color: #6c63ff;
-        font-size: 16px;
-        font-weight: 500;
         border-radius: 8px;
-        transition: 0.3s ease-in-out;
+        padding: 10px 20px;
+        font-weight: 500;
+        transition: 0.3s ease;
     }
 
     .btn-primary:hover {
-        background-color: #574fd6;
-        border-color: #574fd6;
+        background-color: #5a52e0;
     }
+/* Base style for .content is already defined */
+
+/* Extra Small Devices (phones, <576px) */
+@media (max-width: 575.98px) {
+    .content {
+        margin-left: 0;
+        padding: 10px;
+    }
+
+    .create-post-container {
+        max-width: 100%;
+        margin-top: 20px;
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+}
+
+/* Small Devices (phones to tablets, 576px - 767.98px) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .content {
+        margin-left: 0;
+        padding: 15px;
+    }
+
+    .create-post-container {
+        max-width: 100%;
+        margin-top: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+}
+
+/* Medium Devices (tablets, 768px - 991.98px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .content {
+        margin-left: 180px;
+        padding: 20px;
+    }
+
+    .create-post-container {
+        max-width: 90%;
+        margin-top: 40px;
+        padding: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+}
+
+/* Large Devices (small desktops, 992px - 1199.98px) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .content {
+        margin-left: 220px;
+        padding: 25px;
+    }
+
+    .create-post-container {
+        max-width: 80%;
+        margin-top: 50px;
+        padding: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+}
+
+/* Extra Large Devices (desktops, 1200px - 1399.98px) */
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+    .content {
+        margin-left: 240px;
+        padding: 30px;
+    }
+
+    .create-post-container {
+        max-width: 70%;
+        margin-top: 50px;
+        padding: 35px;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+}
+
+/* Extra Extra Large Devices (large desktops, 1400px and up) */
+@media (min-width: 1400px) {
+    .content {
+        margin-left: 250px;
+        padding: 40px;
+    }
+
+    .create-post-container {
+        max-width: 60%;
+        margin-top: 60px;
+        padding: 40px;
+    }
+
+    .form-group {
+        margin-bottom: 30px;
+    }
+}
+
+
 </style>
 {% endblock content %}

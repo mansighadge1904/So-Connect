@@ -13,3 +13,4 @@ db.sqlite3
 
 # Ignore VS Code settings
 .vscode/
+.env
