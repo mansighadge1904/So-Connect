@@ -18,7 +18,7 @@
         </ul>
 
         <!-- Groups -->
-        <h6 class="p-3 mt-3">Groups</h6>
+        <!-- <h6 class="p-3 mt-3">Groups</h6>
         <ul class="list-group list-group-flush">
             {% for group in groups %}
                 <li class="list-group-item {% if selected_group and selected_group.id == group.id %}active{% endif %}">
@@ -27,12 +27,12 @@
                     </a>
                 </li>
             {% endfor %}
-        </ul>
+        </ul> -->
 
         <!-- Add Group Button -->
-        <div class="p-3 border-top">
+        <!-- <div class="p-3 border-top">
             <a href="{% url 'create_group' %}" class="btn btn-sm btn-outline-primary w-100">+ Create Group</a>
-        </div>
+        </div> -->
     </div>
 
     <!-- Right Column: Messages -->
@@ -79,7 +79,7 @@
             </form>
 
         {% else %}
-            <div class="p-3 text-muted">Select a user or group to start chatting.</div>
+            <div class="p-3 text-muted">Select a user to start chatting.</div>
         {% endif %}
 
     </div>

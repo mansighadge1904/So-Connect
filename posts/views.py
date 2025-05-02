@@ -84,12 +84,7 @@ def mark_as_viewed(request, story_id):
         print("Request method not POST, it was:", request.method)
         return JsonResponse({'success': False, 'message': 'Invalid method'})
     
-def story_detail(request, id):
-    # Fetch the story by ID, or return a 404 if not found
-    story = get_object_or_404(Story, id=id)
 
-    # Return the story detail to be rendered inside the modal
-    return render(request, 'story_detail.html', {'story': story})  
       
 @login_required
 def create_story(request):
@@ -104,6 +99,8 @@ def create_story(request):
     else:
         form = StoryForm()
     return render(request, 'create_story.html', {'form': form})
+
+
 
 @login_required
 def like_post(request, post_id):
@@ -175,3 +172,4 @@ def delete_post(request, post_id):
         post.delete()
     
     return redirect('profile', username=request.user.username)
+
