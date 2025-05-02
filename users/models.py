@@ -10,12 +10,13 @@ class CustomUser(AbstractUser):
         return self.username
 
 User= get_user_model()
-
 class Hobby(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=100, unique=True)  # Normalized (e.g., 'travelling')
+    display_name = models.CharField(max_length=100, blank=True, null=True, default="")       # What the user typed (e.g., 'roaming')
 
     def __str__(self):
-        return self.name
+        return self.display_name
+
 
 def get_default_user():
     return User.objects.first().id if User.objects.exists() else None

@@ -1,15 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Post, Story, Comment, StoryView
-from users.models import Hobby
+from users.models import Hobby, Profile
 from .forms import PostForm, StoryForm
 from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
 from django.http import JsonResponse
 from django.utils.timezone import now
 from django.urls import reverse
 from datetime import timedelta
 from django.utils import timezone
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -54,7 +56,9 @@ def dashboard(request):
     user_hobbies = request.user.profile.hobbies.all()
 
     # Filter posts that are related to the user's hobbies
-    posts = Post.objects.filter(hobbies__in=user_hobbies).distinct()
+    posts = Post.objects.filter(
+        Q(hobbies__in=user_hobbies) | Q(user=request.user)
+    ).distinct()
 
     context = {
         'stories': stories,
@@ -133,7 +137,32 @@ def add_comment(request, post_id):
             Comment.objects.create(post=post, user=request.user, content=content)
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    if request.user != comment.user:
+        messages.error(request, "You are not allowed to delete this comment.")
+        return redirect('dashboard')  # or the page you want to go back to
+
+    if request.method == 'POST':
+        comment.delete()
+        messages.success(request, "Comment deleted successfully.")
+    
+    return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
+
 def posts_by_hobby(request, hobby_id):
     hobby = Hobby.objects.get(id=hobby_id)
     posts = Post.objects.filter(hobbies=hobby)
     return render(request, 'posts_by_hobby.html', {'hobby': hobby, 'posts': posts})
+
+def explore(request):
+    # Get all posts and users without any filtering
+    posts = Post.objects.exclude(user=request.user)
+    users = Profile.objects.all()
+
+    context = {
+        'posts': posts,
+        'users': users,
+    }
+
+    return render(request, 'explore.html', context)

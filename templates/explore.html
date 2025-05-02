@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<main>
+    <div class="container">
+        <div class="explore-section">
+            <h2>Explore Posts</h2>
+            <div class="posts">
+                {% for post in posts %}
+                    <div class="post">
+                        <div class="post-header">
+                            <h3>{{ post.user.username }}</h3>
+                            <p>{{ post.created_at }}</p>
+                        </div>
+                        <div class="post-content">
+                            {% if post.image %}
+                                <img src="{{ post.image.url }}" alt="Post Image">
+                            {% endif %}
+                            <p>{{ post.caption }}</p>
+                        </div>
+                        <div class="post-actions">
+                            <button class="like-button" data-post-id="{{ post.id }}">
+                                <i class="{% if request.user in post.likes.all %}fas fa-heart{% else %}far fa-heart{% endif %}"></i>
+                                <span id="like-count-{{ post.id }}">{{ post.likes.count }}</span>
+                            </button>
+                        
+                            <button class="toggle-comments" data-post-id="{{ post.id }}" style="background: none; border: none; cursor: pointer;">
+                                <i class="uil uil-comment-dots"></i>
+                                <span class="comment-count" id="comment-count-{{ post.id }}">{{ post.comments.count }}</span>
+                            </button>
+                        </div>
+                        
+                        <div class="comments-container" id="comments-{{ post.id }}" style="display: none; margin-left: 40px; margin-top: 10px;">
+                            {% for comment in post.comments.all %}
+                                <p><strong>{{ comment.user.username }}</strong> {{ comment.content }}</p>
+                            {% endfor %}
+                            <form method="POST" action="{% url 'add_comment' post.id %}" class="comment-form" id="comment-form-{{ post.id }}">
+                                {% csrf_token %}
+                                <input type="text" name="content" placeholder="Add a comment..." class="form-control" required>
+                                <button type="submit" class="btn btn-light">Post</button>
+                            </form>
+                        </div>
+                        
+                    </div>
+                {% empty %}
+                    <p>No posts available to explore.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+    .explore-section {
+        margin: 20px;
+    }
+
+    .explore-section h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .posts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .post {
+        width: 300px;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 8px;
+        background-color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .post:hover {
+        transform: scale(1.05);
+    }
+
+    .post img {
+        width: 100%;
+        border-radius: 8px;
+        object-fit: cover;
+        max-height: 250px;
+    }
+
+    .post-header h3 {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .post-header p {
+        font-size: 14px;
+        color: #888;
+    }
+
+    .post-content p {
+        margin-top: 10px;
+    }
+
+    .post-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 10px;
+    }
+
+    .like-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #f44336;
+        font-size: 18px;
+    }
+
+    .like-button i {
+        font-size: 24px;
+    }
+
+    .like-button span {
+        margin-left: 5px;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+
+        // Like button AJAX
+        $(".like-button").click(function (event) {
+            event.preventDefault();
+            var postId = $(this).data("post-id");
+            var likeButton = $(this);
+            $.ajax({
+                url: '/like-post/' + postId + '/',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                },
+                success: function (response) {
+                    $('#like-count-' + postId).text(response.like_count);
+                    if (response.liked) {
+                        likeButton.find('i').removeClass('far').addClass('fas');
+                    } else {
+                        likeButton.find('i').removeClass('fas').addClass('far');
+                    }
+                }
+            });
+        });
+
+        // Comment form submission via AJAX
+        $(".comment-form").submit(function (event) {
+            event.preventDefault();
+            var postId = $(this).attr("id").split('-')[2];  // Get post ID from form ID
+            var commentForm = $(this);
+            $.ajax({
+                url: '/add-comment/' + postId + '/',
+                type: 'POST',
+                data: commentForm.serialize(),
+                success: function (response) {
+                    // Append the new comment
+                    $('#comments-' + postId).append('<p><strong>' + response.username + '</strong> ' + response.content + '</p>');
+                    $('#comment-count-' + postId).text(parseInt($('#comment-count-' + postId).text()) + 1);  // Increment comment count
+                    commentForm[0].reset();  // Reset the comment input field
+                }
+            });
+        });
+
+        // Toggle comments visibility
+        $(".toggle-comments").click(function () {
+            var postId = $(this).data("post-id");
+            $('#comments-' + postId).toggle();
+        });
+    });
+</script>
+
+{% endblock content %}

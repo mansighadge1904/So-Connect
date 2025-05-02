@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="display: flex; height: 80vh; border: 1px solid #ccc;">
+
+    <!-- Left Column: Users List -->
+    <div style="width: 30%; border-right: 1px solid #ddd; overflow-y: auto;">
+        <h5 class="p-3">ChitChat</h5>
+        <ul class="list-group list-group-flush">
+            {% for user in users %}
+                <li class="list-group-item {% if selected_user and selected_user.username == user.username %}active{% endif %}">
+                    <a href="{% url 'chat_with_user' user.username %}" class="text-decoration-none text-dark d-block">
+                        {{ user.username }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Groups -->
+        <h6 class="p-3 mt-3">Groups</h6>
+        <ul class="list-group list-group-flush">
+            {% for group in groups %}
+                <li class="list-group-item {% if selected_group and selected_group.id == group.id %}active{% endif %}">
+                    <a href="{% url 'chat_group' group.id %}" class="text-decoration-none text-dark d-block">
+                        {{ group.name }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Add Group Button -->
+        <div class="p-3 border-top">
+            <a href="{% url 'create_group' %}" class="btn btn-sm btn-outline-primary w-100">+ Create Group</a>
+        </div>
+    </div>
+
+    <!-- Right Column: Messages -->
+    <div style="width: 70%; display: flex; flex-direction: column;">
+
+        {% if selected_user or selected_group %}
+            <!-- Header -->
+            <div class="p-3 border-bottom">
+                {% if selected_user %}
+                    <strong>Chat with {{ selected_user.username }}</strong>
+                {% elif selected_group %}
+                    <strong>Group: {{ selected_group.name }}</strong>
+                {% endif %}
+            </div>
+
+            <!-- Chat Box -->
+            <div id="chat-box" class="p-3 flex-grow-1 overflow-auto" style="height: 100%; overflow-y: scroll;">
+                {% for msg in messages %}
+                    <div class="mb-2">
+                        <strong>{{ msg.sender.username }}</strong>: {{ msg.message|default:msg.message }}
+                        <div class="text-muted small">{{ msg.timestamp|date:"H:i" }}</div>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">No messages yet.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Message Form -->
+            <form method="POST" id="message-form" class="p-3 border-top">
+                {% csrf_token %}
+                {% if selected_user %}
+                    <input type="hidden" name="receiver" value="{{ selected_user.username }}">
+                    <div class="input-group">
+                        <input type="text" name="message" class="form-control" placeholder="Type a message..." required>
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </div>
+                {% elif selected_group %}
+                    <input type="hidden" name="group_id" value="{{ selected_group.id }}">
+                    <div class="input-group">
+                        <input type="text" name="content" class="form-control" placeholder="Type a message..." required>
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </div>
+                {% endif %}
+            </form>
+
+        {% else %}
+            <div class="p-3 text-muted">Select a user or group to start chatting.</div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+<style>
+    /* General Layout */
+    .container-fluid {
+        display: flex;
+        height: 80vh;
+        border: 1px solid #ccc;
+    }
+
+    #chat-box {
+        padding: 1rem;
+        flex-grow: 1;
+        overflow-y: scroll;
+        height: 100%;
+        background-color: #f9f9f9;
+    }
+
+    #chat-box .message-box {
+        padding: 10px;
+        border-radius: 20px;
+        margin-bottom: 1rem;
+        max-width: 80%;
+    }
+
+    #chat-box .message-box.bg-primary {
+        background-color: #007bff;
+        color: white;
+        align-self: flex-end;
+    }
+
+    #chat-box .message-box.bg-light {
+        background-color: #f1f1f1;
+        color: #333;
+        align-self: flex-start;
+    }
+
+    /* User List Section */
+    .list-group-item {
+        padding: 0.8rem 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .list-group-item:hover {
+        background-color: #e9ecef;
+    }
+
+    .list-group-item.active {
+        background-color: #007bff;
+        color: white;
+    }
+
+    /* Form Styling */
+    .input-group input {
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+
+    .input-group button {
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        font-size: 1rem;
+    }
+
+    .input-group button:hover {
+        background-color: #0056b3;
+    }
+
+    /* User List */
+    #users-list {
+        width: 30%;
+        border-right: 1px solid #ddd;
+        overflow-y: auto;
+        background-color: #f7f7f7;
+    }
+
+    /* Chat Header */
+    .chat-header {
+        padding: 1rem;
+        background-color: #007bff;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .chat-header button {
+        background-color: #fff;
+        color: #007bff;
+        border: 1px solid #ddd;
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        font-size: 1rem;
+    }
+
+    .chat-header button:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* Messages Section */
+    .chat-message {
+        margin-bottom: 1rem;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    /* Styling for empty chat message section */
+    .chat-empty {
+        text-align: center;
+        color: #aaa;
+        font-size: 1.2rem;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+        .container-fluid {
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        #users-list {
+            width: 100%;
+            border-right: none;
+        }
+
+        #chat-box {
+            width: 100%;
+        }
+    }
+
+</style>
+<script>
+   const form = document.getElementById('message-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            console.log("Sending form data:", formData);  // Log form data for debugging
+
+            fetch("{% url 'send_message' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log("Message sent successfully:", data);  // Log success response
+                    // Append new message to the chat box without reloading
+                    const message = data.message;
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('mb-2');
+                    messageElement.innerHTML = `<strong>${message.sender}</strong>: ${message.message} <div class="text-muted small">${message.timestamp}</div>`;
+                    document.getElementById('chat-box').appendChild(messageElement);
+                    form.querySelector('input[name="message"]').value = '';  // Clear message input
+                    document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;  // Scroll to the bottom
+                } else {
+                    console.log("Message failed to send:", data);  // Log failure response
+                }
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);  // Log error in case of failure
+            });
+        });
+    }
+
+</script>
+{% endblock %}

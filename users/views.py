@@ -11,6 +11,7 @@ from django.views.decorators.http import require_GET
 from .models import Hobby, Profile
 from posts.models import Post, Story
 from social.models import Follow
+from .utils import normalize_hobbies 
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -81,7 +82,7 @@ def profile_view(request, username):
         'is_following': is_following,
         'is_own_profile': request.user == user_profile_obj,
         'user_profile_obj': user_profile_obj,
-        'stories': stories, 
+        'stories': stories,
     }
     return render(request, 'profile.html', context)
 
@@ -89,48 +90,57 @@ def profile_view(request, username):
 @login_required
 def edit_profile(request, username):
     user = get_object_or_404(User, username=username)
-
-    # Ensure profile exists
     profile, created = Profile.objects.get_or_create(user=user)
 
     if request.method == "POST":
         user.username = request.POST.get("username", user.username)
         user.email = request.POST.get("email", user.email)
         hobby_names = request.POST.get("hobbies", "")
-        hobby_list = [name.strip() for name in hobby_names.split(",") if name.strip()]
+        raw_hobby_list = [name.strip() for name in hobby_names.split(",") if name.strip()]
 
-        # Create or get Hobby objects
+        # ✅ Normalize the hobbies using synonyms
+        normalized_hobby_pairs = normalize_hobbies(raw_hobby_list)
+
         hobby_objects = []
-        for name in hobby_list:
-            hobby, created = Hobby.objects.get_or_create(name=name)
+        for normalized_name, display_name in normalized_hobby_pairs:
+            hobby, created = Hobby.objects.get_or_create(
+                name=normalized_name,
+                defaults={"display_name": display_name}
+            )
+            # Update display_name if it's a new variation
+            if hobby.display_name != display_name:
+                hobby.display_name = display_name
+                hobby.save()
             hobby_objects.append(hobby)
 
         profile.hobbies.set(hobby_objects)
 
-
-
-        # Check if a new profile picture is uploaded
+        # ✅ Handle profile picture
         if "profile_picture" in request.FILES:
             profile.image = request.FILES["profile_picture"]
 
         user.save()
         profile.save()
-        return redirect("profile", username=user.username)  # Redirect to the profile page after saving
+        return redirect("profile", username=user.username)
 
     return render(request, "edit_profile.html", {
-        "user": user, 
+        "user": user,
         "profile": profile,
-        "profile_hobbies": ", ".join([hobby.name for hobby in profile.hobbies.all()]),
+        "profile_hobbies": ", ".join([hobby.display_name for hobby in profile.hobbies.all()]),
     })
-
-
 
 
 @require_GET
 def search_users_ajax(request):
-    query = request.GET.get("q", "")
-    users = User.objects.filter(username__icontains=query)
-    data = {
-        "users": [{"username": user.username} for user in users]
-    }
-    return JsonResponse(data)
+    query = request.GET.get('q', '')
+    users = User.objects.filter(username__icontains=query)  # Example query
+    users_data = []
+
+    for user in users:
+        user_data = {
+            'username': user.username,
+            'profile_image_url': user.profile.image.url if user.profile.image else None,
+        }
+        users_data.append(user_data)
+
+    return JsonResponse({'users': users_data})

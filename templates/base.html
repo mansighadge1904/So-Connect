@@ -50,13 +50,18 @@
                             <i class="uil uil-home"></i>
                             <span class="menu-text"> Home</span>
                         </a>
+                        <a href="{% url 'explore'  %}">
+                            <i class="uil uil-compass"></i>
+                            <span class="menu-text"> Explore</span>
+                        </a>
+
                         <a href="{% url 'notifications' %}">
                             <i class="uil uil-bell"></i>
                             <span class="menu-text"> Notifications </span>
                         </a>
-                        <a href="{% url 'inbox' %}">
+                        <a href="{% url 'chitchat' %}">
                             <i class="uil uil-envelope-alt"></i>
-                            <span class="menu-text"> Messages </span>
+                            <span class="menu-text"> ChitChat</span>
                         </a> 
                         <a href="{% url 'profile' username=request.user.username %}">
                             <i class="uil uil-user"></i>
@@ -66,7 +71,7 @@
                             <i class="uil uil-edit"></i>
                             <span class="menu-text"> Edit Profile</span>
                         </a>
-
+                        
                         <a href="{% url 'index' %}" class="logout-link">
                             <i class="fas fa-sign-out-alt"></i>
                             <span class="menu-text"> Logout</span>

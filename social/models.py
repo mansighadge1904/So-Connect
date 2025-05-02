@@ -15,16 +15,12 @@ class Follow(models.Model):
     def __str__(self):
         return f"{self.follower} follows {self.following}"
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)  # Save the Follow object first
-        
-        # Then create a notification
-        from .models import Notification  # Import here to avoid circular import
-        Notification.objects.create(
-            notification_type=Notification.FOLLOW,
-            recipient=self.following,  # Who is being followed
-            sender=self.follower,      # Who followed
-        )
+    class Meta:
+        unique_together = ('follower', 'following')  # Prevent duplicate follows
+
+
+   
+
 # Now you can safely reference Post in Notification
 class Notification(models.Model):
     # Notification Types
