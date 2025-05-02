@@ -166,3 +166,12 @@ def explore(request):
     }
 
     return render(request, 'explore.html', context)
+
+@login_required
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if post.user == request.user:  # only allow owner to delete
+        post.delete()
+    
+    return redirect('profile', username=request.user.username)
