@@ -1,119 +1,383 @@
-body {
-    font-family: sans-serif;
-    margin: 0;
-    display: flex;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+/* Root Variables */
+:root {
+    --color-dark: hsl(252, 30%, 17%);
+    --color-light: hsl(252, 30%, 95%);
+    --color-white: hsl(252, 30%, 100%);
+    --color-gray: hsl(252, 15%, 65%);
+    --color-primary: hsl(252, 75%, 60%);
+    --color-secondary: hsl(252, 100%, 90%);
+    --color-success: hsl(120, 95%, 65%);
+    --color-danger: hsl(0, 95%, 65%);
+    --color-black: hsl(252, 30%, 10%);
+    --border-radius: 2rem;
+    --card-border-radius: 1rem;
+    --btn-padding: 0.6rem 1rem;
+    --search-padding: 0.6rem 1rem;
+    --card-padding: 1rem;
+    --sticky-top-left: 5.4rem;
+    --sticky-top-right: -18rem;
 }
 
-.profile-container {
-    display: flex;
-    width: 100%;
-}
-
-/* Sidebar Styling */
-.sidebar {
-    width: 200px;
-    background-color: #f0f0f0;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); 
-}
-
-.sidebar .logo {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 30px;
-}
-
-.sidebar nav ul {
-    list-style: none;
+/* General Styles */
+*, *::before, *::after {
     padding: 0;
-}
-
-.sidebar nav ul li {
-    margin-bottom: 10px;
-}
-
-.sidebar nav ul li a {
+    outline: 0;
+    box-sizing: border-box;
     text-decoration: none;
-    color: #333;
-    display: block;
-    padding: 10px;
-    border-radius: 5px;
+    list-style: none;
+    border: none;
 }
 
-.sidebar nav ul li a:hover {
+body {
+    font-family: "Poppins", sans-serif;
+    color: var(--color-dark);
+    background: var(--color-light);
+    margin: 0;
+}
+
+/* Main Styles */
+main {
+    margin-top: 2rem;
+    background-color: #fafafa;
+    padding-bottom: 2rem;
+}
+
+main .container {
+    display: flex;
+    justify-content: center;
+    max-width: 1200px; /* Increased max-width */
+    margin-left: 20rem;
+    padding: 0 20px;
+}
+
+
+/* Middle Styles */
+.middle {
+    flex: 1;
+    max-width: 614px;
+}
+ 
+/* Stories Section */
+.stories {
+    display: flex;
+    overflow-x: scroll;
+    padding: 20px 0;
+    gap: 10px;
+}
+
+.story {
+    position: relative;
+    width: 100px; /* Set width of each story item */
+    height: 150px; /* Set height of each story item */
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.story:hover {
+    transform: scale(1.05);
+}
+
+.story-img, .story-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.story-text {
+    padding: 10px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.name {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: white;
+    font-weight: bold;
+}
+
+/* Modal Styling */
+#storyModal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;  /* Modal width */
+    height: 80%; /* Modal height */
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    overflow: hidden; /* Ensures content doesn't overflow */
+}
+
+/* Story content inside modal */
+#storyContent {
+    position: relative;
+    max-width: 100%;
+    max-height: 100%;
+    overflow: hidden;
+}
+
+/* Image or Video inside the modal */
+#storyContent img,
+#storyContent video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Maintains aspect ratio */
+}
+
+/* Close Button Styling */
+#closeStory {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10000;
+}
+
+#closeStory i {
+    font-size: 18px;
+    color: #000;
+}
+    /* Add a fade-in effect when the modal appears */
+#storyModal.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+ /* Fade-in effect */
+ @keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.middle .feeds .feed {
+    background: var(--color-white);
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    margin: 1rem 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.middle .feed .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.feed .user {
+    display: flex;
+    align-items: center;
+}
+
+.feed .user .profile-photo {
+    margin-right: 1rem;
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+
+.feed .info h3 {
+    font-size: 1rem;
+    margin: 0;
+    color: #262626;
+}
+
+.feed .info small {
+    font-size: 0.75rem;
+    color: #8e8e8e;
+}
+
+.feed .edit {
+    cursor: pointer;
+    color: #262626;
+}
+
+.feed .photo {
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    overflow: hidden;
+    max-height: 500px;
+}
+
+.feed .photo img {
+    width: 100%;
+    display: block;
+    object-fit: contain;
+    max-height: 100%;
+}
+
+.feed .action-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.feed .interaction-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.feed .interaction-buttons a {
+    color: #262626;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.feed .interaction-buttons span {
+    color: #262626;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.like-icon.liked-fill {
+    color: #ed4956;
+}
+
+.like-icon.unliked {
+    color: #262626;
+}
+/* Comment Section */
+.comments-container {
+    display: flex;
+    flex-direction: column; /* Stack comments vertically */
+    gap: 12px; /* Space between each comment */
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #f9f9f9; /* Light background for the comment section */
+    border-radius: 10px; /* Rounded corners for the comment section */
+    max-height: 300px;
+    overflow-y: auto; /* Allow scrolling if there are too many comments */
+}
+
+/* Individual Comment */
+.comments-container p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+}
+
+/* Username in Comment */
+.comments-container strong {
+    font-weight: bold;
+    color: #007bff; /* Highlight username */
+}
+
+/* Comment Input Field */
+.comments-container input[type="text"] {
+    padding: 8px 15px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+/* Focused Input Field */
+.comments-container input[type="text"]:focus {
+    border-color: #007bff;
+}
+
+/* Submit Button */
+.comments-container button[type="submit"] {
+    padding: 8px 15px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+/* Button Hover Effect */
+.comments-container button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+
+
+.comment-form button:hover {
     background-color: #e0e0e0;
 }
-
-/* Profile Content Styling */
-.profile-content {
-    flex: 1;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.feed .bookmark {
+    cursor: pointer;
+    color: #262626;
+    font-size: 1.2rem;
 }
 
-.profile-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
+.feed .caption {
+    font-size: 0.9rem;
+    color: #262626;
+    line-height: 1.4;
 }
 
-.profile-picture img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 20px;
+.feed .caption b {
+    font-weight: 600;
 }
 
-.profile-info h2 {
-    font-size: 24px;
-    margin-bottom: 5px;
+.scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #a78bfa;
+    border-radius: 10px;
 }
 
-.profile-stats {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
+
+/* Adjustments for small screens */
+@media (max-width: 576px) {
+    main .container {
+        margin-left: 5px;
+    }
+    .comments-container {
+        padding: 8px;
+    }
+    .comments-container input[type="text"] {
+        padding: 6px 12px;
+    }
+    .comments-container button[type="submit"] {
+        padding: 6px 12px;
+    }
 }
 
-.profile-stats span {
-    background-color: #f0f0f0;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
+@media (max-width: 768px){
+    main .container {
+        margin-left: 5px;
+    }
+    .left {
+        display: none; /* Hide the sidebar by default */
+        transform: translateX(-100%);
+    }
 
-.bio {
-    font-style: italic;
-}
+    .left.show {
+        display: block;
+        transform: translateX(0); /* Slide in */
+    }
 
-/* Post Grid Styling */
-.post-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(150px, 1fr));
-    gap: 15px;
-    width: 100%; /* Make grid take full width of profile-content */
-    max-width: 600px; /* Limit grid width to prevent excessive stretching */
-}
-.post-grid .post {
-    display: flex;
-    flex-direction: column;
-}
-.post-grid img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1 /1;
-    object-fit: cover;
-    border-radius: 5px;
-}
-
-.post-actions {
-    display: flex;
-    justify-content: space-around;
-    padding: 5px;
-}
-
-.post-details {
-    padding: 5px;
 }

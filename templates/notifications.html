@@ -58,9 +58,10 @@
         padding: 20px;
         background-color: #f9f9f9;
         border-radius: 8px;
+        width: 500px;
         max-width: 800px;
-        margin: 0 auto;
-        margin-left: 300px;
+        margin-top: 3rem;
+        margin-left: 30rem;
     }
 
     .notifications-container h2 {
@@ -133,6 +134,18 @@
         font-size: 1.2rem;
         font-style: italic;
         color: #888;
+    }
+    @media (max-width: 768px) {
+        .notifications-container {
+            margin-left: 5px;
+            margin-top: 3rem;
+            width: 90%;
+        }
+    }
+    @media (min-width: 1025px) and (max-width: 1280px) {
+        .notifications-container {
+            width: 60%;
+        }
     }
 </style>
 {% endblock %}

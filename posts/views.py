@@ -58,7 +58,7 @@ def dashboard(request):
     # Filter posts that are related to the user's hobbies
     posts = Post.objects.filter(
         Q(hobbies__in=user_hobbies) | Q(user=request.user)
-    ).distinct()
+    ).distinct().order_by('-created_at')
 
     context = {
         'stories': stories,
@@ -121,11 +121,12 @@ def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     like_count = post.likes.count()  # This will give the number of likes
     comment_count = post.comments.count()  # Assuming you have a comments field/model
-    return render(request, 'post/post_detail.html', {
+    return render(request, 'post_detail.html', {
         'post': post,
         'like_count': like_count,
         'comment_count': comment_count
     })
+
 def add_comment(request, post_id):
     if request.method == "POST":
         post = get_object_or_404(Post, id=post_id)

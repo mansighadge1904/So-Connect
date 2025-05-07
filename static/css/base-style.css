@@ -19,6 +19,7 @@ nav {
     height: 6.3rem;
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 5px;
 }
 
 nav .container {
@@ -109,12 +110,12 @@ main {
 }
 
 .left {
-    width: 180px;
+    width: 150px;
     position: fixed;
     top: 6.5rem;
     left: 6rem;
     margin-right: 2rem;
-    height: calc(100vh - 6.5rem);
+    height: calc(100vh - 6.2rem);
     overflow-y: auto;
     transition: transform 0.5s ease;
 }

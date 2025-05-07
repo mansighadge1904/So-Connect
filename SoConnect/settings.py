@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-import dj_database_url
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -54,7 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    
 ]
 CHANNEL_LAYERS = {
     'default': {
@@ -89,7 +88,13 @@ TEMPLATES = [
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 DATABASES = {
-    'default': dj_database_url.config(default='postgres://localhost')
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'soconnect',
+        'USER' : 'root',
+        'PASSWORD':'Vw,qZ%*%#2Ey',
+        'HOST': 'localhost',
+    }
 }
 
 
@@ -129,8 +134,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 STATICFILES_DIRS = [
@@ -157,4 +161,4 @@ CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000']
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-ALLOWED_HOSTS = ['*']
+
