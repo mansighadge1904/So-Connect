@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from decouple import config
 import django_heroku
 import dj_database_url
 from urllib.parse import urlparse
@@ -89,22 +90,25 @@ TEMPLATES = [
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+url = urlparse(os.environ.get('JAWSDB_URL'))
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT', '3306'),
+        'NAME': url.path[1:],  # Get database name from the URL (after the first slash)
+        'USER': url.username,   # MySQL username
+        'PASSWORD': url.password,  # MySQL password
+        'HOST': url.hostname,   # MySQL host
+        'PORT': url.port,       # MySQL port
     }
 }
 
+# Check for CLEARDB_DATABASE_URL and override if present
 if 'CLEARDB_DATABASE_URL' in os.environ:
     url = urlparse(os.environ['CLEARDB_DATABASE_URL'])
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': url.path[1:],  # removes the leading '/'
+        'NAME': url.path[1:],  # Removes the leading '/'
         'USER': url.username,
         'PASSWORD': url.password,
         'HOST': url.hostname,
