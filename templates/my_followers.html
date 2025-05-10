@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Your Followers</h2>
+    {% if follower_users %}
+    <div class="row">
+        {% for follow in follower_users %}
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">
+                        <a href="{% url 'profile' username=follow.follower.username %}" style="color: rgb(50, 89, 197); text-decoration: none;">
+                            {{ follow.follower.username }}
+                        </a>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center">No one is following you.</p>
+    {% endif %}
+</div>
+<style>
+    .container {
+        margin-left: 40rem;
+        margin-top: 15px;
+    }
+    @media (max-width: 768px) {
+        .container {
+            margin-left: 5px;
+        }
+    } 
+</style>
+{% endblock %}

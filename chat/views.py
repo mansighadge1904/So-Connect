@@ -11,7 +11,14 @@ User = get_user_model()
 def chitchat_view(request, username=None):
     # Get users the logged-in user is following
     followed_users = Follow.objects.filter(follower=request.user).values_list('following', flat=True)
-    users = User.objects.filter(id__in=followed_users)
+    followed_users_list = User.objects.filter(id__in=followed_users)
+
+    # Get users who have sent messages to the logged-in user
+    sent_messages_users = ChatMessage.objects.filter(receiver=request.user).values('sender').distinct()
+    users_sent_messages = User.objects.filter(id__in=[user['sender'] for user in sent_messages_users])
+
+    # Combine followed users and users who sent messages, but avoid duplicates
+    users_in_chat = followed_users_list | users_sent_messages
 
     selected_user = None
     messages = []
@@ -27,12 +34,13 @@ def chitchat_view(request, username=None):
     groups = ChatGroup.objects.filter(members=request.user)
 
     context = {
-        'users': users,
+        'users': users_in_chat,
         'selected_user': selected_user,
         'messages': messages,
         'groups': groups,
     }
     return render(request, 'chitchat.html', context)
+
 
 
 @login_required
@@ -42,14 +50,18 @@ def send_message(request):
             receiver_username = request.POST['receiver']
             receiver = User.objects.get(username=receiver_username)
             message_content = request.POST['message']
-            message = ChatMessage(sender=request.user, receiver=receiver, message=message_content)
-            message.save()
+            # Check if the message content is not empty
+            if message_content.strip():
+                message = ChatMessage(sender=request.user, receiver=receiver, message=message_content)
+                message.save()
         elif 'group_id' in request.POST:  # Group message
             group_id = request.POST['group_id']
             group = ChatGroup.objects.get(id=group_id)
             message_content = request.POST['content']
-            message = GroupMessage(group=group, sender=request.user, message=message_content)
-            message.save()
+            # Check if the message content is not empty
+            if message_content.strip():
+                message = GroupMessage(group=group, sender=request.user, message=message_content)
+                message.save()
 
         return redirect(request.META.get('HTTP_REFERER'))  # Redirect back to the previous page
     else:

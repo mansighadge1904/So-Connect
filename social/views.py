@@ -143,3 +143,14 @@ def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     # Optionally, you can pass additional context like comments or likes here
     return render(request, 'post_detail.html', {'post': post})
+
+@login_required
+def my_following(request):
+    following_users = Follow.objects.filter(follower=request.user).select_related('following')
+    return render(request, 'my_following.html', {'following_users': following_users})
+
+
+@login_required
+def my_followers(request):
+    follower_users = Follow.objects.filter(following=request.user).select_related('follower')
+    return render(request, 'my_followers.html', {'follower_users': follower_users})

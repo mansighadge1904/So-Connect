@@ -1,1 +1,2 @@
-web: gunicorn SoConnect.wsgi
+web: gunicorn SoConnect.wsgi --log-file -
+

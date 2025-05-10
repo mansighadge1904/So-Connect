@@ -2,6 +2,9 @@
 
 {% block content %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<form id="csrf-form" style="display: none;">
+    {% csrf_token %}
+</form>
 
 <main>
     <div class="explore-section">
@@ -53,9 +56,10 @@
 
 <style>
     .explore-section {
-        margin-left: 30rem;
+        padding: 2rem;
+        margin-left: 120px; /* adjust if your sidebar width is different */
+        max-width: calc(100% - 190px); /* leave space for sidebar */
     }
-
     .explore-section h2 {
         font-size: 24px;
         margin-bottom: 20px;
@@ -63,16 +67,16 @@
     }
 
     .posts {
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(350px, 1fr));
         gap: 20px;
-        justify-content: center;
     }
 
+
     .post {
-        width: 300px;
         border: 1px solid #ddd;
         padding: 10px;
+        width: 100%;
         border-radius: 8px;
         background-color: white;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -126,11 +130,59 @@
     .like-button span {
         margin-left: 5px;
     }
-    @media (max-width: 768px) {
-        .explore-section {
-            margin: 0;
+    @media (max-width: 480px) {
+        .posts {
+            grid-template-columns: 1fr; /* Only 1 post per row */
+        }
+        .post {
+            padding: 0.5rem;
+        }
+        .post-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .profile-info {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .story-preview img {
+            width: 60px;
+            height: 60px;
         }
     }
+    @media (min-width: 481px) and (max-width: 768px) {
+        .posts {
+            grid-template-columns: repeat(2, minmax(200px, 1fr)); /* More flexible width */
+            gap: 0.5rem; /* Less spacing between posts */
+            padding: 0 0.5rem;
+        }
+
+        .post {
+            padding: 0.5rem;
+            width: 100%;
+        }
+
+        .sidebar {
+            display: none;
+        }
+
+        .header {
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 1rem;
+        }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .posts {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .sidebar {
+            width: 180px;
+        }
+    }
+
 </style>
 <script>
     $(document).ready(function () {
@@ -141,10 +193,10 @@
             var postId = $(this).data("post-id");
             var likeButton = $(this);
             $.ajax({
-                url: '/like-post/' + postId + '/',
+                url: '/posts/like-post/' + postId + '/',
                 type: 'POST',
                 data: {
-                    'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                   'csrfmiddlewaretoken': $('#csrf-form input[name="csrfmiddlewaretoken"]').val(),
                 },
                 success: function (response) {
                     $('#like-count-' + postId).text(response.like_count);

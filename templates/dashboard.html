@@ -7,12 +7,12 @@
 
     <main>
         <div class="container">
-        
+            
             <div class="middle">
                 <div class="stories">
                     
-                    <a href="{% url 'create_story' %}" class="btn btn-primary">Create Story</a>
                    
+                 <!--  -->
                     {% for story in stories %}
                         <div class="story" data-story-id="{{ story.id }}">
                             {% if story.image %}
@@ -46,7 +46,8 @@
                         <i class="fas fa-times"></i> 
                     </button>
                 </div>
-
+                <b> </b>
+                    <a href="{% url 'create_story' %}" class="btn btn-primary">Create Story</a>
                 <div class="feeds">
                     {% for post in posts %}
                         <div class="feed" data-post-id="{{ post.id }}">
@@ -173,47 +174,7 @@
                 commentBox.style.display = (commentBox.style.display === 'none') ? 'block' : 'none';
             });
         });
-        document.getElementById('search-input').addEventListener('input', function() {
-            const query = this.value;
-            const resultsBox = document.getElementById('search-results');
-            
-            // Show loading state while fetching results
-            resultsBox.innerHTML = '<div class="loading">Loading...</div>';
-
-            if (query.length > 0) {
-                fetch(`/users/search-users-ajax/?q=` + query)
-                    .then(response => response.json())
-                    .then(data => {
-                        resultsBox.innerHTML = '';
-                        if (data.users.length > 0) {
-                            data.users.forEach(user => {
-                                const link = document.createElement('a');
-                                link.href = `/users/profile/${user.username}/`;
-                                link.classList.add('result-item');
-
-                                // Create image element
-                                const img = document.createElement('img');
-                                img.src = user.profile_image_url || '/static/default-profile.png';  // Fallback to a default image if no profile image
-                                img.alt = `${user.username}'s profile picture`;
-                                img.classList.add('search-result-image'); 
-
-                                const username = document.createElement('span');
-                                username.classList.add('user-name');
-                                username.textContent = user.username;
-                                link.appendChild(username);
-
-                                resultsBox.appendChild(link);
-                            });
-                        } else {
-                            resultsBox.innerHTML = '<p class="no-results">No users found</p>';
-                        }
-                        resultsBox.style.display = 'block';
-                    });
-            } else {
-                resultsBox.style.display = 'none';
-            }
-        });
-
+        
         document.addEventListener('DOMContentLoaded', function () {
         const stories = Array.from(document.querySelectorAll('.story'));
         const storyModal = document.getElementById('storyModal');

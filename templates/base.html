@@ -16,6 +16,11 @@
             <!-- Hamburger Button for Mobile -->
             <button class="menu-button" onclick="toggleSidebar()">☰</button>
             <h2 class="logo">SoConnect</h2>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search users..." autocomplete="off">
+                <div id="search-results" class="search-results-box"></div>
+            </div>
+            
             <div class="create">
                 <a href="{% url 'create_post' %}" class="btn btn-primary">Create</a>
     
@@ -25,7 +30,7 @@
                         {% if request.user.profile.image %}
                             <img src="{{ request.user.profile.image.url }}" alt="Profile">
                         {% else %}
-                            <img src="{% static 'images/default-profile.jpg' %}" alt="Profile">
+                            <img src="{% static 'assets1/default.jpeg' %}" alt="Profile">
                         {% endif %}
                     </a>
                 </div>
@@ -94,6 +99,47 @@
             const sidebar = document.querySelector('.left');
             sidebar.classList.toggle('show');
         }
+        document.getElementById('search-input').addEventListener('input', function() {
+            const query = this.value;
+            const resultsBox = document.getElementById('search-results');
+            
+            // Show loading state while fetching results
+            resultsBox.innerHTML = '<div class="loading">Loading...</div>';
+
+            if (query.length > 0) {
+                fetch(`/users/search-users-ajax/?q=` + query)
+                    .then(response => response.json())
+                    .then(data => {
+                        resultsBox.innerHTML = '';
+                        if (data.users.length > 0) {
+                            data.users.forEach(user => {
+                                const link = document.createElement('a');
+                                link.href = `/users/profile/${user.username}/`;
+                                link.classList.add('result-item');
+
+                                // Create image element
+                                const img = document.createElement('img');
+                                img.src = user.profile_image_url || '/static/default-profile.png';  // Fallback to a default image if no profile image
+                                img.alt = `${user.username}'s profile picture`;
+                                img.classList.add('search-result-image'); 
+
+                                const username = document.createElement('span');
+                                username.classList.add('user-name');
+                                username.textContent = user.username;
+                                link.appendChild(username);
+
+                                resultsBox.appendChild(link);
+                            });
+                        } else {
+                            resultsBox.innerHTML = '<p class="no-results">No users found</p>';
+                        }
+                        resultsBox.style.display = 'block';
+                    });
+            } else {
+                resultsBox.style.display = 'none';
+            }
+        });
+
     </script>
 </body>
 </html>=

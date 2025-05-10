@@ -2,7 +2,9 @@
 {% load static %}
 {% block content %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+<form id="csrf-form" style="display: none;">
+    {% csrf_token %}
+</form>
 <div class="profile-container">
     <main class="profile-content">
         <div class="profile-header">
@@ -11,13 +13,12 @@
                     {% if request.user.profile.image %}
                         <img src="{{ user.profile.image.url }}" alt="Profile">
                     {% else %}
-                        <i class="uil uil-user"></i>
+                        <img src="{% static 'assets1/default.jpeg'}" alt="Profile">
                     {% endif %}
                 </a>
             </div>
             <div class="profile-info">
                 <h2 class="username">{{ user.username }}</h2>
-                <p><strong>Email:</strong> {{ user.email }}</p>
                 <p><strong>Hobbies:</strong>
                     {% if user.profile.hobbies.exists %}
                         {{ user.profile.hobbies.all|join:", " }}
@@ -28,9 +29,24 @@
                 
                 <div class="profile-stats">
                     <span><strong>Posts:</strong> {{ post_count }}</span>
-                    <span><strong>Followers:</strong> {{ follower_count }}</span>
-                    <span><strong>Following:</strong> {{ following_count }}</span>
+                    
+                    <span>
+                        <strong>
+                            <a href="{% url 'my_followers' %}" style="text-decoration: none; color: inherit;">
+                                Followers:
+                            </a>
+                        </strong> {{ follower_count }}
+                    </span>
+                    
+                    <span>
+                        <strong>
+                            <a href="{% url 'my_following' %}" style="text-decoration: none; color: inherit;">
+                                Following:
+                            </a>
+                        </strong> {{ following_count }}
+                    </span>
                 </div>
+                
                 <!-- Follow/Unfollow Button -->
                 {% if request.user != user_profile_obj %}
                 <form id="follow-form-{{ user_profile_obj.id }}" action="{% url 'follow_user' user_profile_obj.id  %}" method="POST">
@@ -51,12 +67,26 @@
                 {% with post=item.post like_count=item.like_count comment_count=item.comment_count %}
                     <div class="post">
                         <img src="{{ post.image.url }}" alt="{{ post.caption }}">
-                        
-                    
                         <div class="post-actions">
-                            <i class="far fa-heart action-icon"></i>
-                            <i class="far fa-comment action-icon"></i>
+                            <form class="like-form" data-post-id="{{ post.id }}">
+                                {% csrf_token %}
+                                {% if post.id in liked_post_ids %}
+                                    <button type="submit" class="btn-like liked" style="background: none; border: none;">
+                                        <i class="fas fa-heart text-danger"></i>
+                                    </button>
+                                {% else %}
+                                    <button type="submit" class="btn-like" style="background: none; border: none;">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                {% endif %}
+                                <span class="like-count">{{ like_count }}</span>
+                            </form>
+                        
+                            
+                                <i class="far fa-comment action-icon"></i>
+                            
                         </div>
+                        
                         <div class="post-details">
                             <p class="post-caption">{{ post.caption }}</p>
                             <p class="post-date">Posted on: {{ post.created_at|date:"F j, Y" }}</p>
@@ -90,6 +120,7 @@
         flex-direction: column;
         align-items: center;
         width: 100%;
+        margin-top: 0;
         padding: 20px;
         box-sizing: border-box;
         overflow-x: hidden;
@@ -287,37 +318,62 @@
     }
 </style>
 <script>
-    $(document).ready(function() {
-         $('.follow-btn').click(function(e) {
-             e.preventDefault();
- 
-             const button = $(this);
-             const userId = button.data('user-id');
-             const actionUrl = button.hasClass('btn-danger') ? `/social/unfollow/${userId}/` : `/social/follow/${userId}/`;
- 
-             $.ajax({
-                 url: actionUrl,
-                 method: 'POST',
-                 data: {
-                     csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val()
-                 },
-                 success: function(response) {
-                     if (response.success) {
-                         if (response.action === 'unfollow') {
-                             button.text('Follow');
-                             button.removeClass('btn-danger').addClass('btn-primary');
-                         } else {
-                             button.text('Unfollow');
-                             button.removeClass('btn-primary').addClass('btn-danger');
-                         }
-                         $('#follower-count').text(response.follower_count);
-                         $('#following-count').text(response.following_count);
-                     } else {
-                         alert(response.message);
-                     }
-                 }
-             });
-         });
-     });
+ $(document).ready(function() {
+    $(".like-form").submit(function (event) {
+    event.preventDefault();
+    var postId = $(this).data("post-id");
+    var likeButton = $(this).find('.btn-like');
+    
+    $.ajax({
+        url: '/posts/like-post/' + postId + '/',
+        type: 'POST',
+        data: {
+            'csrfmiddlewaretoken': $('#csrf-form input[name="csrfmiddlewaretoken"]').val(),
+        },
+        success: function (response) {
+            console.log(response); // Check if response is returned
+            $('#like-count-' + postId).text(response.like_count);
+            if (response.liked) {
+                likeButton.find('i').removeClass('far').addClass('fas text-danger');
+            } else {
+                likeButton.find('i').removeClass('fas text-danger').addClass('far');
+            }
+        }
+    });
+});
+
+
+    // Follow/Unfollow button AJAX
+    $('.follow-btn').click(function(e) {
+        e.preventDefault();
+
+        const button = $(this);
+        const userId = button.data('user-id');
+        const actionUrl = button.hasClass('btn-danger') ? `/social/unfollow/${userId}/` : `/social/follow/${userId}/`;
+
+        $.ajax({
+            url: actionUrl,
+            type: 'POST',
+            data: {
+                'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+            },
+            success: function(response) {
+                if (response.followed) {
+                    button.removeClass('btn-primary').addClass('btn-danger').text('Unfollow');
+                } else {
+                    button.removeClass('btn-danger').addClass('btn-primary').text('Follow');
+                }
+
+                // Optionally update follower count
+                if (response.follower_count !== undefined) {
+                    $('a[href$="my_followers"]')
+                        .closest('span')
+                        .html(`<strong><a href="/social/my_followers/" style="text-decoration: none; color: inherit;">Followers:</a></strong> ${response.follower_count}`);
+                }
+            }
+        });
+    });
+});
+
  </script>
 {% endblock content %}
